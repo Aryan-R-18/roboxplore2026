@@ -45,6 +45,10 @@
 
     <style>
         /* --- GLOBAL STYLES --- */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
         body {
             background-color: #0B0B0B;
             color: #ffffff;
@@ -220,6 +224,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            max-width: 100%;
             z-index: 0;
             opacity: 0.6;
         }
@@ -277,19 +282,20 @@
         }
     </style>
 </head>
-<body class="font-exo antialiased selection:bg-neon-red selection:text-white">
+<body class="font-exo antialiased selection:bg-neon-red selection:text-white ">
 
     <!-- Background Pattern -->
     <div class="circuit-bg"></div>
+     
 
     <!-- === NEW BUBBLE MENU === -->
     
     <!-- Floating Top Bar (Logo + Toggle) -->
     <nav class="bubble-menu" aria-label="Main navigation">
         <!-- Logo Bubble (Acts as Home Link) -->
-        <a href="#" class="bubble logo-bubble text-neon-blue hover:text-white no-underline">
+        <!-- <a href="#" class="bubble logo-bubble text-neon-blue hover:text-white no-underline">
             <i class="fas fa-robot text-xl"></i>
-        </a>
+        </a> -->
 
         <!-- Toggle Button -->
         <button type="button" class="bubble toggle-bubble menu-btn" aria-label="Toggle menu" onclick="toggleBubbleMenu()">
@@ -320,11 +326,6 @@
                 </a>
             </li>
 
-            <li role="none" class="pill-col">
-                <a role="menuitem" href="#prizes" class="pill-link" style="--hover-bg: #8b5cf6; --hover-color: #fff; --rotation: 6deg;" onclick="closeBubbleMenu()">
-                    <span class="pill-label">Prizes</span>
-                </a>
-            </li>
 
             <li role="none" class="pill-col">
                 <a role="menuitem" href="#register" class="pill-link" style="--hover-bg: #E10600; --hover-color: #fff; --rotation: 8deg; border: 2px solid #E10600;" onclick="closeBubbleMenu()">
@@ -343,7 +344,7 @@
     </a>
 
     <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center overflow-hidden pt-16">
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         <canvas id="hero-canvas"></canvas>
         <div class="hero-content text-center px-4 max-w-4xl mx-auto">
             <!-- Main Text Logo (Static) -->
@@ -358,7 +359,7 @@
             </p>
             
             <!-- Countdown Timer -->
-            <div class="flex justify-center space-x-4 md:space-x-8 mb-10 font-orbitron" id="countdown">
+            <div class="flex flex-wrap justify-center gap-4 md:gap-8 mb-10 font-orbitron" id="countdown">
                 <!-- Injected via JS -->
             </div>
 
@@ -385,10 +386,10 @@
                 <div class="reveal">
                     <h2 class="text-neon-blue font-orbitron text-4xl font-bold mb-6">THE MISSION</h2>
                     <p class="text-gray-400 text-lg leading-relaxed mb-6">
-                        RoboXplore is the ultimate battleground for autonomous line-following robots. Your mission is simple yet challenging: design a bot capable of traversing a complex black-line trajectory on a white surface in the shortest time possible.
+                        RoboXplore offers an engaging, hands-on introduction to the world of practical robotics, designed to take you from the basics of autonomous systems to the creation of a fully functional machine. Throughout this session, you will dive deep into the synergy between sensors, motors, and microcontrollers, learning exactly how these components communicate to bring a robot to life. Beyond just theory, you will assemble and program your own Line Following Robot, mastering the logic required for a machine to detect and navigate a predefined path automatically.
                     </p>
                     <p class="text-gray-400 text-lg leading-relaxed mb-8">
-                        It's not just about speed; it's about precision, sensor calibration, and PID control logic. Can your bot handle sharp turns, intersections, and loop-the-loops without losing the path?
+                        This workshop is more than a technical lesson; it is an opportunity to develop vital skills in electronics, creative problem-solving, and complex system design. The experience culminates in an adrenaline-pumping Line Following Bot Competition, where you will put your engineering to the test. By fine-tuning your code and hardware, you will compete against fellow participants to prove who can build the fastest, most efficient, and most precise bot in the arena. 
                     </p>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex items-center space-x-3 text-white">
@@ -467,9 +468,8 @@
                         </div>
                         <h3 class="font-orbitron text-xl font-bold text-white mb-4">Structure</h3>
                         <p class="text-gray-400">
-                            Round 1: Qualifying (Simple Track). <br>
-                            Round 2: Knockout (Complex Track). <br>
-                            Top 3 teams proceed to the "Mystery Element" finale.
+                            The competition will consist of a single round where each team navigates their bot through the track. 
+            The completion time of each bot will be recorded, and the team with the lowest time will be declared the winner.    
                         </p>
                     </div>
                 </div>
@@ -477,33 +477,33 @@
         </div>
     </section>
 
-    <!-- Prizes Section -->
+    <!-- Prizes Section
     <section id="prizes" class="py-20 bg-deep-black">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-center font-orbitron text-4xl font-bold mb-16 reveal">PRIZE POOL</h2>
             
-            <div class="flex flex-col md:flex-row justify-center items-end gap-6 md:gap-8 reveal">
+            <div class="flex flex-col md:flex-row justify-center items-end gap-6 md:gap-8 reveal"> -->
                 
                 <!-- 2nd Place -->
-                <div class="order-2 md:order-1 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
+                <!-- <div class="order-2 md:order-1 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
                     <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center border-4 border-deep-black font-bold text-black">2</div>
                     <h3 class="mt-8 font-orbitron text-xl text-gray-300">Runner Up</h3>
                     <p class="text-3xl font-bold text-white mt-2">$300</p>
                     <p class="text-sm text-gray-500 mt-2">+ Certificates</p>
-                </div>
+                </div> -->
 
                 <!-- 1st Place -->
-                <div class="order-1 md:order-2 w-full md:w-1/3 bg-gray-900 border-2 border-neon-blue p-8 rounded-t-xl text-center relative shadow-glow-blue transform scale-105 z-10">
+                <!-- <div class="order-1 md:order-2 w-full md:w-1/3 bg-gray-900 border-2 border-neon-blue p-8 rounded-t-xl text-center relative shadow-glow-blue transform scale-105 z-10">
                     <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-yellow-400 flex items-center justify-center border-4 border-deep-black font-bold text-black text-xl">1</div>
                     <div class="text-neon-blue text-sm font-bold tracking-widest mb-2">CHAMPION</div>
                     <h3 class="font-orbitron text-2xl text-white">Winner</h3>
                     <p class="text-5xl font-bold text-white mt-2">$700</p>
                     <p class="text-sm text-gray-400 mt-4">+ Trophy & Merchandise</p>
                     <p class="text-sm text-gray-400">Internship Opportunity</p>
-                </div>
+                </div> -->
 
                 <!-- 3rd Place -->
-                <div class="order-3 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
+                <!-- <div class="order-3 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
                     <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-yellow-700 flex items-center justify-center border-4 border-deep-black font-bold text-black">3</div>
                     <h3 class="mt-8 font-orbitron text-xl text-yellow-700">2nd Runner Up</h3>
                     <p class="text-3xl font-bold text-white mt-2">$150</p>
@@ -512,7 +512,7 @@
 
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Timeline -->
     <section id="timeline" class="py-20 bg-panel-gray border-t border-gray-800">
@@ -529,7 +529,7 @@
                         <h3 class="text-neon-blue font-bold text-xl">Registration Opens</h3>
                         <span class="text-gray-500 text-sm">March 10, 2026</span>
                     </div>
-                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-neon-red rounded-full border-4 border-deep-black shadow-[0_0_10px_red]"></div>
+                    <div class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-neon-red rounded-full border-4 border-deep-black shadow-[0_0_10px_red]"></div>
                     <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0">
                         <p class="text-gray-400 text-sm">Online portal opens. Team formation begins.</p>
                     </div>
@@ -538,12 +538,12 @@
                 <!-- Item 2 -->
                 <div class="relative md:flex justify-between items-center w-full reveal">
                     <div class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0 order-1">
-                        <p class="text-gray-400 text-sm">Technical check of bots (Dimensions, Weight, Safety).</p>
+                        <p class="text-gray-400 text-sm"> Hands-on workshop where participants will learn how combat robots work and get the opportunity to build their own bot with guidance from mentors.</p>
                     </div>
-                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"></div>
+                    <div class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"></div>
                     <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0 order-2">
-                        <h3 class="text-white font-bold text-xl">Bot Scrutiny</h3>
-                        <span class="text-gray-500 text-sm">April 05, 2026 - 09:00 AM</span>
+                        <h3 class="text-white font-bold text-xl">Bot Building Workshop</h3>
+                        <span class="text-gray-500 text-sm">March 14, 2026 - 09:00 AM</span>
                     </div>
                 </div>
 
@@ -551,9 +551,9 @@
                 <div class="relative md:flex justify-between items-center w-full reveal">
                     <div class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0">
                         <h3 class="text-white font-bold text-xl">Competition Start</h3>
-                        <span class="text-gray-500 text-sm">April 05, 2026 - 11:00 AM</span>
+                        <span class="text-gray-500 text-sm">April 15, 2026 - 11:00 AM</span>
                     </div>
-                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"></div>
+                    <div class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"></div>
                     <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0">
                         <p class="text-gray-400 text-sm">Qualifying rounds begin. Best track time recorded.</p>
                     </div>
@@ -575,7 +575,7 @@
 
                 <div class="text-center mb-10">
                     <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white mb-2">JOIN THE <span class="text-neon-red">RACE</span></h2>
-                    <p class="text-gray-400">Limited slots available. Register before March 30th.</p>
+                    <p class="text-gray-400">Limited slots available. Register before March 11th.</p>
                 </div>
 
                 <form id="regForm" class="space-y-6">
@@ -594,7 +594,23 @@
                         <!-- Branch -->
                         <div>
                             <label class="block text-sm font-medium text-gray-400 mb-2">Branch <span class="text-neon-red">*</span></label>
-                            <input type="text" name="branch" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. Computer Science">
+                            <select 
+                                name="branch" 
+                                required 
+                                class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                                >
+                                <option value="" disabled selected>Select your branch</option>
+                                <option value="CSE">Computer Science and Engineering</option>
+                                <option value="AIML">Computer Science and Engineering (AI ML)</option>
+                                <option value="ETC">Electronics & TeleCommunication Engineering</option>
+                                <option value="EEE">Electrical And Electronics Engineering</option>
+                                <option value="EE">Electrical Engineering</option>
+                                <option value="ME">Mechanical Engineering</option>
+                                <option value="CE">Civil Engineering</option>
+                                <option value="CE">Metallurgical & Materials Engineering</option>
+                                <option value="CE">Production Engineering</option>
+                                <option value="CE">Smart Manufacturing Engineering</option>
+                            </select>
                         </div>
                     </div>
 
@@ -605,38 +621,169 @@
                             <input type="text" name="leaderRegdNo" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. 250XXXXXXX">
                         </div>
                         <!-- Team Size -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Team Size <span class="text-neon-red">*</span></label>
-                            <select name="teamSize" id="teamSize" required onchange="updateMemberFields()" class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition cursor-pointerm text-gray-400 mb-1">Team Size</label>
-">
-                                <option value="">Select Team Size</option>
-                                <option value="4">4 Members</option>
-                                <option value="5">5 Members</option>
-                            </select>
-                        </div>
+                       
                     </div>
 
                     <!-- Dynamic Member Fields -->
                     <div id="memberFields" class="space-y-4">
                         <!-- Member 2 -->
                         <div class="member-field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 2 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member2" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 2 Name">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Member 2 Name -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Member 2 Name <span class="text-neon-red">*</span></label>
+                                    <input type="text" name="member2Name" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="Full Name">
+                                </div>
+                                <!-- Branch -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Branch <span class="text-neon-red">*</span></label>
+                                    <select 
+                                        name="branch" 
+                                        required 
+                                        class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                                        >
+                                        <option value="" disabled selected>Select your branch</option>
+                                        <option value="CSE">Computer Science and Engineering</option>
+                                        <option value="AIML">Computer Science and Engineering (AI ML)</option>
+                                        <option value="ETC">Electronics & TeleCommunication Engineering</option>
+                                        <option value="EEE">Electrical And Electronics Engineering</option>
+                                        <option value="EE">Electrical Engineering</option>
+                                        <option value="ME">Mechanical Engineering</option>
+                                        <option value="CE">Civil Engineering</option>
+                                        <option value="CE">Metallurgical & Materials Engineering</option>
+                                        <option value="CE">Production Engineering</option>
+                                        <option value="CE">Smart Manufacturing Engineering</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Member 2 Regd No -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Member 2 Regd No. <span class="text-neon-red">*</span></label>
+                                    <input type="text" name="member2RegdNo" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. 250XXXXXXX">
+                                </div>
+                            
+                            </div>
                         </div>
                         <!-- Member 3 -->
-                        <div class="member-field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 3 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member3" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 3 Name">
+                        <div class="member-field" >
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" >
+                                 <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Member 3 Name <span class="text-neon-red">*</span></label>
+                                <input type="text" name="member3Name" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="Full Name">
+                            </div>
+                            <!-- Branch -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Branch <span class="text-neon-red">*</span></label>
+                                <select 
+                                    name="branch" 
+                                    required 
+                                    class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                                    >
+                                    <option value="" disabled selected>Select your branch</option>
+                                    <option value="CSE">Computer Science and Engineering</option>
+                                    <option value="AIML">Computer Science and Engineering (AI ML)</option>
+                                    <option value="ETC">Electronics & TeleCommunication Engineering</option>
+                                    <option value="EEE">Electrical And Electronics Engineering</option>
+                                    <option value="EE">Electrical Engineering</option>
+                                    <option value="ME">Mechanical Engineering</option>
+                                    <option value="CE">Civil Engineering</option>
+                                    <option value="CE">Metallurgical & Materials Engineering</option>
+                                    <option value="CE">Production Engineering</option>
+                                    <option value="CE">Smart Manufacturing Engineering</option>
+                                </select>
+                            </div>
+                            </div>
+                               
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Member 3 Regd No -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Member 3 Regd No. <span class="text-neon-red">*</span></label>
+                                <input type="text" name="member3RegdNo" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. 250XXXXXXX">
+                            </div>
+                        
+                        </div>
                         </div>
                         <!-- Member 4 -->
                         <div class="member-field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 4 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member4" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 4 Name">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" >
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-2">Member 4 Name <span class="text-neon-red">*</span></label>
+                                        <input type="text" name="member4Name" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="Full Name">
+                                    </div>
+                            <!-- Branch -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-2">Branch <span class="text-neon-red">*</span></label>
+                                        <select 
+                                            name="branch" 
+                                            required 
+                                            class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                                            >
+                                            <option value="" disabled selected>Select your branch</option>
+                                            <option value="CSE">Computer Science and Engineering</option>
+                                            <option value="AIML">Computer Science and Engineering (AI ML)</option>
+                                            <option value="ETC">Electronics & TeleCommunication Engineering</option>
+                                            <option value="EEE">Electrical And Electronics Engineering</option>
+                                            <option value="EE">Electrical Engineering</option>
+                                            <option value="ME">Mechanical Engineering</option>
+                                            <option value="CE">Civil Engineering</option>
+                                            <option value="CE">Metallurgical & Materials Engineering</option>
+                                            <option value="CE">Production Engineering</option>
+                                            <option value="CE">Smart Manufacturing Engineering</option>
+                                        </select>
+                                    </div>
+                            </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Member 4 Regd No -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Member 4 Regd No. <span class="text-neon-red">*</span></label>
+                                <input type="text" name="member4RegdNo" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. 250XXXXXXX">
+                            </div>
+                        
                         </div>
-                        <!-- Member 5 (Hidden by default) -->
-                        <div class="member-field hidden" id="member5Field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 5 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member5" class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 5 Name">
+                        </div>
+                        <!-- Member 5  -->
+                        <div class="member-field" id="member5Field">
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-6" >
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Member 5 Name <span class="text-neon-red">*</span></label>
+                                    <input type="text" name="member5Name" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="Full Name">
+                                </div>
+                                <!-- Branch -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Branch <span class="text-neon-red">*</span></label>
+                                    <select 
+                                        name="branch" 
+                                        required 
+                                        class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                                        >
+                                        <option value="" disabled selected>Select your branch</option>
+                                        <option value="CSE">Computer Science and Engineering</option>
+                                        <option value="AIML">Computer Science and Engineering (AI ML)</option>
+                                        <option value="ETC">Electronics & TeleCommunication Engineering</option>
+                                        <option value="EEE">Electrical And Electronics Engineering</option>
+                                        <option value="EE">Electrical Engineering</option>
+                                        <option value="ME">Mechanical Engineering</option>
+                                        <option value="CE">Civil Engineering</option>
+                                        <option value="CE">Metallurgical & Materials Engineering</option>
+                                        <option value="CE">Production Engineering</option>
+                                        <option value="CE">Smart Manufacturing Engineering</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Member 5 Regd No -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Member 5 Regd No. <span class="text-neon-red">*</span></label>
+                                <input type="text" name="member5RegdNo" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. 250XXXXXXX">
+                            </div>
+                        
+                        </div>
                         </div>
                     </div>
 
@@ -651,7 +798,7 @@
                                 <!-- QR Code Image -->
                                 <img src="roboxplore.jpeg" alt="Payment QR Code" class="w-48 h-48 object-contain" />
                             </div>
-                            <p class="text-neon-red font-bold text-lg mt-4">Registration Fee: ₹30</p>
+                            <p class="text-neon-red font-bold text-lg mt-4">Registration Fee: ₹50 / Member</p>
                             <p class="text-gray-500 text-xs mt-2">UPI ID: vasudevgantayada1-1@okicici</p>
                         </div>
 
@@ -784,8 +931,8 @@
                 </div>
                 
                 <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-2xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter text-2xl"></i></a>
+                    <a href="https://www.instagram.com/vssut_robotics/?hl=en" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-2xl"></i></a>
+                    <a href="https://www.linkedin.com/company/vssutrobotics/posts/?feedView=all" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin text-2xl"></i></a>
                     <a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-envelope text-2xl"></i></a>
                 </div>
             </div>
