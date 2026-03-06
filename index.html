@@ -1,509 +1,648 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RoboXplore | Line Follower Bot Competition</title>
-    
+
     <!-- Fonts: Oxanium for headers, Rajdhani for body -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Icons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    
+
     <!-- GSAP for Animations (Required for Bubble Menu) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Tailwind Config for Custom Colors -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'neon-red': '#E10600',
-                        'neon-blue': '#00A3FF',
-                        'deep-black': '#0B0B0B',
-                        'panel-gray': '#121212',
-                    },
-                    fontFamily: {
-                        orbitron: ['Oxanium', 'cursive'],
-                        exo: ['Rajdhani', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'glow-red': '0 0 15px rgba(225, 6, 0, 0.6)',
-                        'glow-blue': '0 0 15px rgba(0, 163, 255, 0.6)',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'neon-red': '#E10600',
+              'neon-blue': '#00A3FF',
+              'deep-black': '#0B0B0B',
+              'panel-gray': '#121212',
+            },
+            fontFamily: {
+              orbitron: ['Oxanium', 'cursive'],
+              exo: ['Rajdhani', 'sans-serif'],
+            },
+            boxShadow: {
+              'glow-red': '0 0 15px rgba(225, 6, 0, 0.6)',
+              'glow-blue': '0 0 15px rgba(0, 163, 255, 0.6)',
+            },
+          },
+        },
+      }
     </script>
 
     <style>
-        /* --- GLOBAL STYLES --- */
-        body {
-            background-color: #0B0B0B;
-            color: #ffffff;
-            overflow-x: hidden;
-        }
+      /* --- GLOBAL STYLES --- */
+      html,
+      body {
+        overflow-x: hidden;
+        max-width: 100%;
+      }
+      body {
+        background-color: #0b0b0b;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
 
-        .circuit-bg {
-            background-image: radial-gradient(#1a1a1a 1px, transparent 1px), radial-gradient(#1a1a1a 1px, transparent 1px);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            opacity: 0.2;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
+      .circuit-bg {
+        background-image: radial-gradient(#1a1a1a 1px, transparent 1px),
+          radial-gradient(#1a1a1a 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        opacity: 0.2;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+      }
 
-        /* --- BUBBLE MENU CSS (Ported from React) --- */
-        :root {
-            --menu-bg: #1a1a1a;
-            --menu-content: #ffffff;
-        }
+      /* --- BUBBLE MENU CSS (Ported from React) --- */
+      :root {
+        --menu-bg: #1a1a1a;
+        --menu-content: #ffffff;
+      }
 
-        /* Container for the floating bubbles (Logo + Toggle) */
-        .bubble-menu {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            z-index: 1000;
-            display: flex;
-            gap: 0.75rem;
-            pointer-events: auto;
-        }
+      /* Container for the floating bubbles (Logo + Toggle) */
+      .bubble-menu {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 1000;
+        display: flex;
+        gap: 0.75rem;
+        pointer-events: auto;
+      }
 
-        /* Individual Bubble Base Styles */
-        .bubble {
-            width: 3.5rem;
-            height: 3.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--menu-bg);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+      /* Individual Bubble Base Styles */
+      .bubble {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--menu-bg);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
 
-        .bubble:hover {
-            transform: scale(1.1);
-            border-color: #00A3FF;
-        }
+      .bubble:hover {
+        transform: scale(1.1);
+        border-color: #00a3ff;
+      }
 
-        /* Toggle Button (Hamburger) */
-        .toggle-bubble {
-            cursor: pointer;
-            flex-direction: column;
-            gap: 5px;
-            border: none;
-            outline: none;
-        }
+      /* Toggle Button (Hamburger) */
+      .toggle-bubble {
+        cursor: pointer;
+        flex-direction: column;
+        gap: 5px;
+        border: none;
+        outline: none;
+      }
 
-        .menu-line {
-            width: 20px;
-            height: 2px;
-            background-color: var(--menu-content);
-            transition: all 0.3s ease;
-            transform-origin: center;
-        }
-        
-        .menu-line.short {
-            width: 14px;
-            align-self: center; 
-        }
+      .menu-line {
+        width: 20px;
+        height: 2px;
+        background-color: var(--menu-content);
+        transition: all 0.3s ease;
+        transform-origin: center;
+      }
 
-        /* Hamburger Animation State */
-        .toggle-bubble.open .menu-line:first-child {
-            transform: translateY(3.5px) rotate(45deg);
-        }
-        .toggle-bubble.open .menu-line.short {
-            width: 20px;
-            transform: translateY(-3.5px) rotate(-45deg);
-        }
+      .menu-line.short {
+        width: 14px;
+        align-self: center;
+      }
 
-        /* Full Screen Overlay */
-        .bubble-menu-items {
-            position: fixed;
-            inset: 0;
-            z-index: 999;
-            background: rgba(11, 11, 11, 0.9);
-            backdrop-filter: blur(15px);
-            display: none; /* Controlled by GSAP */
-            justify-content: center;
-            align-items: center;
-        }
+      /* Hamburger Animation State */
+      .toggle-bubble.open .menu-line:first-child {
+        transform: translateY(3.5px) rotate(45deg);
+      }
+      .toggle-bubble.open .menu-line.short {
+        width: 20px;
+        transform: translateY(-3.5px) rotate(-45deg);
+      }
 
-        /* List of Pills */
-        .pill-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            padding: 0;
-            margin: 0;
-            text-align: center;
-        }
+      /* Full Screen Overlay */
+      .bubble-menu-items {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(11, 11, 11, 0.9);
+        backdrop-filter: blur(15px);
+        display: none; /* Controlled by GSAP */
+        justify-content: center;
+        align-items: center;
+      }
 
-        .pill-col {
-            position: relative;
-        }
+      /* List of Pills */
+      .pill-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+      }
 
-        .pill-link {
-            display: inline-block;
-            padding: 1rem 3rem;
-            border-radius: 9999px;
-            background: var(--pill-bg, #1a1a1a);
-            color: var(--pill-color, white);
-            text-decoration: none;
-            font-family: 'Oxanium', cursive;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transform-origin: center;
-            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-            
-            /* Initial State for GSAP */
-            transform: scale(0); 
-        }
+      .pill-col {
+        position: relative;
+      }
 
-        .pill-link:hover {
-            background-color: var(--hover-bg) !important;
-            color: var(--hover-color) !important;
-            transform: scale(1.05) rotate(0deg) !important; /* Flatten on hover */
-            box-shadow: 0 0 20px var(--hover-bg);
-        }
+      .pill-link {
+        display: inline-block;
+        padding: 1rem 3rem;
+        border-radius: 9999px;
+        background: var(--pill-bg, #1a1a1a);
+        color: var(--pill-color, white);
+        text-decoration: none;
+        font-family: 'Oxanium', cursive;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transform-origin: center;
+        transition: background-color 0.3s ease, color 0.3s ease,
+          transform 0.3s ease;
 
-        .pill-label {
-            display: block;
-            /* Initial state handled by GSAP */
-        }
+        /* Initial State for GSAP */
+        transform: scale(0);
+      }
 
-        /* --- EXISTING STYLES --- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+      .pill-link:hover {
+        background-color: var(--hover-bg) !important;
+        color: var(--hover-color) !important;
+        transform: scale(1.05) rotate(0deg) !important; /* Flatten on hover */
+        box-shadow: 0 0 20px var(--hover-bg);
+      }
 
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active{
-            -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
-            -webkit-text-fill-color: white !important;
-        }
+      .pill-label {
+        display: block;
+        /* Initial state handled by GSAP */
+      }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0B0B0B; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #E10600; }
+      /* --- EXISTING STYLES --- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-        #hero-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.6;
-        }
-        .hero-content { position: relative; z-index: 10; }
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+        -webkit-text-fill-color: white !important;
+      }
 
-        .hover-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0, 163, 255, 0.3);
-            border-color: #00A3FF;
-        }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0b0b0b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #e10600;
+      }
 
-        /* Tech Buttons */
-        .btn-tech {
-            position: relative;
-            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Oxanium', cursive; 
-        }
-        .btn-tech-primary {
-            background-color: #E10600;
-            color: white;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-tech-primary:hover {
-            background-color: #ff1a14;
-            transform: translateY(-2px);
-            filter: drop-shadow(0 0 8px rgba(225, 6, 0, 0.6));
-        }
-        .btn-tech-primary::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; width: 15px; height: 15px;
-            border-bottom: 2px solid rgba(255,255,255,0.5);
-            border-left: 2px solid rgba(255,255,255,0.5);
-            pointer-events: none;
-        }
-        .btn-tech-secondary {
-            background-color: transparent;
-            color: #00A3FF;
-            border: 2px solid #00A3FF;
-        }
-        .btn-tech-secondary:hover {
-            background-color: rgba(0, 163, 255, 0.15);
-            color: #fff;
-            filter: drop-shadow(0 0 8px rgba(0, 163, 255, 0.6));
-            transform: translateY(-2px);
-        }
+      #hero-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        z-index: 0;
+        opacity: 0.6;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 10;
+      }
+
+      .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5),
+          0 0 15px rgba(0, 163, 255, 0.3);
+        border-color: #00a3ff;
+      }
+
+      /* Tech Buttons */
+      .btn-tech {
+        position: relative;
+        clip-path: polygon(
+          12px 0,
+          100% 0,
+          100% calc(100% - 12px),
+          calc(100% - 12px) 100%,
+          0 100%,
+          0 12px
+        );
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Oxanium', cursive;
+      }
+      .btn-tech-primary {
+        background-color: #e10600;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .btn-tech-primary:hover {
+        background-color: #ff1a14;
+        transform: translateY(-2px);
+        filter: drop-shadow(0 0 8px rgba(225, 6, 0, 0.6));
+      }
+      .btn-tech-primary::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+        border-left: 2px solid rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+      }
+      .btn-tech-secondary {
+        background-color: transparent;
+        color: #00a3ff;
+        border: 2px solid #00a3ff;
+      }
+      .btn-tech-secondary:hover {
+        background-color: rgba(0, 163, 255, 0.15);
+        color: #fff;
+        filter: drop-shadow(0 0 8px rgba(0, 163, 255, 0.6));
+        transform: translateY(-2px);
+      }
     </style>
-</head>
-<body class="font-exo antialiased selection:bg-neon-red selection:text-white">
-
+  </head>
+  <body class="font-exo antialiased selection:bg-neon-red selection:text-white">
     <!-- Background Pattern -->
     <div class="circuit-bg"></div>
 
     <!-- === NEW BUBBLE MENU === -->
-    
+
     <!-- Floating Top Bar (Logo + Toggle) -->
     <nav class="bubble-menu" aria-label="Main navigation">
-        <!-- Logo Bubble (Acts as Home Link) -->
-        <a href="#" class="bubble logo-bubble text-neon-blue hover:text-white no-underline">
+      <!-- Logo Bubble (Acts as Home Link) -->
+      <!-- <a href="#" class="bubble logo-bubble text-neon-blue hover:text-white no-underline">
             <i class="fas fa-robot text-xl"></i>
-        </a>
+        </a> -->
 
-        <!-- Toggle Button -->
-        <button type="button" class="bubble toggle-bubble menu-btn" aria-label="Toggle menu" onclick="toggleBubbleMenu()">
-            <span class="menu-line"></span>
-            <span class="menu-line short"></span>
-        </button>
+      <!-- Toggle Button -->
+      <button
+        type="button"
+        class="bubble toggle-bubble menu-btn"
+        aria-label="Toggle menu"
+        onclick="toggleBubbleMenu()"
+      >
+        <span class="menu-line"></span>
+        <span class="menu-line short"></span>
+      </button>
     </nav>
 
     <!-- Overlay Items -->
     <div class="bubble-menu-items">
-        <ul class="pill-list" role="menu">
-            
-            <li role="none" class="pill-col">
-                <a role="menuitem" href="#" class="pill-link" style="--hover-bg: #00A3FF; --hover-color: #fff; --rotation: -8deg;" onclick="closeBubbleMenu()">
-                    <span class="pill-label">Home</span>
-                </a>
-            </li>
+      <ul class="pill-list" role="menu">
+        <li role="none" class="pill-col">
+          <a
+            role="menuitem"
+            href="#"
+            class="pill-link"
+            style="--hover-bg: #00a3ff; --hover-color: #fff; --rotation: -8deg"
+            onclick="closeBubbleMenu()"
+          >
+            <span class="pill-label">Home</span>
+          </a>
+        </li>
 
-            <li role="none" class="pill-col">
-                <a role="menuitem" href="#about" class="pill-link" style="--hover-bg: #E10600; --hover-color: #fff; --rotation: 8deg;" onclick="closeBubbleMenu()">
-                    <span class="pill-label">Mission</span>
-                </a>
-            </li>
+        <li role="none" class="pill-col">
+          <a
+            role="menuitem"
+            href="#about"
+            class="pill-link"
+            style="--hover-bg: #e10600; --hover-color: #fff; --rotation: 8deg"
+            onclick="closeBubbleMenu()"
+          >
+            <span class="pill-label">Mission</span>
+          </a>
+        </li>
 
-            <li role="none" class="pill-col">
-                <a role="menuitem" href="#format" class="pill-link" style="--hover-bg: #f59e0b; --hover-color: #fff; --rotation: -5deg;" onclick="closeBubbleMenu()">
-                    <span class="pill-label">Format</span>
-                </a>
-            </li>
+        <li role="none" class="pill-col">
+          <a
+            role="menuitem"
+            href="#format"
+            class="pill-link"
+            style="--hover-bg: #f59e0b; --hover-color: #fff; --rotation: -5deg"
+            onclick="closeBubbleMenu()"
+          >
+            <span class="pill-label">Format</span>
+          </a>
+        </li>
 
-            <li role="none" class="pill-col">
-                <a role="menuitem" href="#prizes" class="pill-link" style="--hover-bg: #8b5cf6; --hover-color: #fff; --rotation: 6deg;" onclick="closeBubbleMenu()">
-                    <span class="pill-label">Prizes</span>
-                </a>
-            </li>
-
-            <li role="none" class="pill-col">
-                <a role="menuitem" href="#register" class="pill-link" style="--hover-bg: #E10600; --hover-color: #fff; --rotation: 8deg; border: 2px solid #E10600;" onclick="closeBubbleMenu()">
-                    <span class="pill-label">REGISTER</span>
-                </a>
-            </li>
-
-        </ul>
+        <li role="none" class="pill-col">
+          <a
+            role="menuitem"
+            href="#register"
+            class="pill-link"
+            style="
+              --hover-bg: #e10600;
+              --hover-color: #fff;
+              --rotation: 8deg;
+              border: 2px solid #e10600;
+            "
+            onclick="closeBubbleMenu()"
+          >
+            <span class="pill-label">REGISTER</span>
+          </a>
+        </li>
+      </ul>
     </div>
     <!-- === END BUBBLE MENU === -->
 
-
     <!-- Sticky Mobile FAB (Register) - Kept for UX, but menu also has it -->
-    <a href="#register" class="md:hidden fixed bottom-6 right-6 bg-neon-red text-white p-4 rounded-full shadow-glow-red z-50 flex items-center justify-center animate-bounce">
-        <i class="fas fa-file-signature text-xl"></i>
+    <a
+      href="#register"
+      class="md:hidden fixed bottom-6 right-6 bg-neon-red text-white p-4 rounded-full shadow-glow-red z-50 flex items-center justify-center animate-bounce"
+    >
+      <i class="fas fa-file-signature text-xl"></i>
     </a>
 
     <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center overflow-hidden pt-16">
-        <canvas id="hero-canvas"></canvas>
-        <div class="hero-content text-center px-4 max-w-4xl mx-auto">
-            <!-- Main Text Logo (Static) -->
-            <div class="inline-block mb-4 px-4 py-1 border border-neon-blue/30 rounded-full bg-blue-900/20 backdrop-blur-sm">
-                <span class="text-neon-blue font-orbitron text-sm tracking-widest">SEASON 2026</span>
-            </div>
-            <h1 class="font-orbitron text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight">
-                ROBO<span class="text-neon-red text-glow-red">X</span>PLORE
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-8 font-light tracking-wide">
-                Follow the Line. <span class="text-white font-bold">Rule the Track.</span>
-            </p>
-            
-            <!-- Countdown Timer -->
-            <div class="flex justify-center space-x-4 md:space-x-8 mb-10 font-orbitron" id="countdown">
-                <!-- Injected via JS -->
-            </div>
+    <section
+      class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
+    >
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-content text-center px-4 max-w-4xl mx-auto">
+        <!-- Main Text Logo (Static) -->
+        <div
+          class="inline-block mb-4 px-4 py-1 border border-neon-blue/30 rounded-full bg-blue-900/20 backdrop-blur-sm"
+        >
+          <span class="text-neon-blue font-orbitron text-sm tracking-widest"
+            >SEASON 2026</span
+          >
+        </div>
+        <h1
+          class="font-orbitron text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight"
+        >
+          ROBO<span class="text-neon-red text-glow-red">X</span>PLORE
+        </h1>
+        <p
+          class="text-xl md:text-2xl text-gray-300 mb-8 font-light tracking-wide"
+        >
+          Follow the Line.
+          <span class="text-white font-bold">Rule the Track.</span>
+        </p>
 
-            <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <a href="#register" class="btn-tech btn-tech-primary px-10 py-4 font-bold text-lg">
-                    REGISTER NOW
-                </a>
-                <a href="#format" class="btn-tech btn-tech-secondary px-10 py-4 font-bold text-lg">
-                    VIEW RULEBOOK
-                </a>
-            </div>
+        <!-- Countdown Timer -->
+        <div
+          class="flex flex-wrap justify-center gap-4 md:gap-8 mb-10 font-orbitron"
+          id="countdown"
+        >
+          <!-- Injected via JS -->
         </div>
-        
-        <!-- Scroll Down Indicator -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-pulse text-gray-500">
-            <i class="fas fa-chevron-down text-2xl"></i>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-6">
+          <a
+            href="#register"
+            class="btn-tech btn-tech-primary px-10 py-4 font-bold text-lg"
+          >
+            REGISTER NOW
+          </a>
+          <a
+            href="#format"
+            class="btn-tech btn-tech-secondary px-10 py-4 font-bold text-lg"
+          >
+            VIEW RULEBOOK
+          </a>
         </div>
+      </div>
+
+      <!-- Scroll Down Indicator -->
+      <div
+        class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-pulse text-gray-500"
+      >
+        <i class="fas fa-chevron-down text-2xl"></i>
+      </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="py-20 bg-deep-black relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="reveal">
-                    <h2 class="text-neon-blue font-orbitron text-4xl font-bold mb-6">THE MISSION</h2>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
-                        RoboXplore is the ultimate battleground for autonomous line-following robots. Your mission is simple yet challenging: design a bot capable of traversing a complex black-line trajectory on a white surface in the shortest time possible.
-                    </p>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
-                        It's not just about speed; it's about precision, sensor calibration, and PID control logic. Can your bot handle sharp turns, intersections, and loop-the-loops without losing the path?
-                    </p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center space-x-3 text-white">
-                            <i class="fas fa-microchip text-neon-red text-xl"></i>
-                            <span>Autonomous Logic</span>
-                        </div>
-                        <div class="flex items-center space-x-3 text-white">
-                            <i class="fas fa-bolt text-neon-red text-xl"></i>
-                            <span>Speed Control</span>
-                        </div>
-                        <div class="flex items-center space-x-3 text-white">
-                            <i class="fas fa-wave-square text-neon-red text-xl"></i>
-                            <span>Sensor Arrays</span>
-                        </div>
-                        <div class="flex items-center space-x-3 text-white">
-                            <i class="fas fa-code text-neon-red text-xl"></i>
-                            <span>Algorithmic Pathing</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="reveal flex justify-center relative">
-                    <!-- Abstract Robot Graphic -->
-                    <div class="relative w-80 h-80">
-                        <div class="absolute inset-0 bg-neon-blue/10 rounded-full blur-3xl animate-pulse"></div>
-                        <div class="absolute inset-0 border-2 border-neon-blue rounded-full border-dashed animate-spin-slow" style="animation-duration: 10s;"></div>
-                        <div class="absolute inset-4 border border-neon-red rounded-full border-dotted animate-spin-slow" style="animation-duration: 15s; animation-direction: reverse;"></div>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-robot text-8xl text-white drop-shadow-lg"></i>
-                        </div>
-                    </div>
-                </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="reveal">
+            <h2 class="text-neon-blue font-orbitron text-4xl font-bold mb-6">
+              THE MISSION
+            </h2>
+            <p class="text-gray-400 text-lg leading-relaxed mb-6">
+              RoboXplore offers an engaging, hands-on introduction to the world
+              of practical robotics, designed to take you from the basics of
+              autonomous systems to the creation of a fully functional machine.
+              Throughout this session, you will dive deep into the synergy
+              between sensors, motors, and microcontrollers, learning exactly
+              how these components communicate to bring a robot to life. Beyond
+              just theory, you will assemble and program your own Line Following
+              Robot, mastering the logic required for a machine to detect and
+              navigate a predefined path automatically.
+            </p>
+            <p class="text-gray-400 text-lg leading-relaxed mb-8">
+              This workshop is more than a technical lesson; it is an
+              opportunity to develop vital skills in electronics, creative
+              problem-solving, and complex system design. The experience
+              culminates in an adrenaline-pumping Line Following Bot
+              Competition, where you will put your engineering to the test. By
+              fine-tuning your code and hardware, you will compete against
+              fellow participants to prove who can build the fastest, most
+              efficient, and most precise bot in the arena.
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="flex items-center space-x-3 text-white">
+                <i class="fas fa-microchip text-neon-red text-xl"></i>
+                <span>Autonomous Logic</span>
+              </div>
+              <div class="flex items-center space-x-3 text-white">
+                <i class="fas fa-bolt text-neon-red text-xl"></i>
+                <span>Speed Control</span>
+              </div>
+              <div class="flex items-center space-x-3 text-white">
+                <i class="fas fa-wave-square text-neon-red text-xl"></i>
+                <span>Sensor Arrays</span>
+              </div>
+              <div class="flex items-center space-x-3 text-white">
+                <i class="fas fa-code text-neon-red text-xl"></i>
+                <span>Algorithmic Pathing</span>
+              </div>
             </div>
+          </div>
+          <div class="reveal flex justify-center relative">
+            <!-- Abstract Robot Graphic -->
+            <div class="relative w-80 h-80">
+              <div
+                class="absolute inset-0 bg-neon-blue/10 rounded-full blur-3xl animate-pulse"
+              ></div>
+              <div
+                class="absolute inset-0 border-2 border-neon-blue rounded-full border-dashed animate-spin-slow"
+                style="animation-duration: 10s"
+              ></div>
+              <div
+                class="absolute inset-4 border border-neon-red rounded-full border-dotted animate-spin-slow"
+                style="animation-duration: 15s; animation-direction: reverse"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-robot text-8xl text-white drop-shadow-lg"></i>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Competition Format -->
-    <section id="format" class="py-20 bg-panel-gray relative border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 reveal">
-                <h2 class="text-white font-orbitron text-4xl font-bold mb-2">COMPETITION <span class="text-neon-red">FORMAT</span></h2>
-                <div class="h-1 w-24 bg-neon-red mx-auto"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1: Electric Border (Blue) -->
-                <div class="electric-border-container bg-deep-black p-8 rounded-xl reveal relative isolate" data-color="#00A3FF">
-                    <div class="relative z-10">
-                        <div class="w-14 h-14 bg-gray-800 rounded-lg flex items-center justify-center mb-6 text-neon-blue">
-                            <i class="fas fa-road text-2xl"></i>
-                        </div>
-                        <h3 class="font-orbitron text-xl font-bold text-white mb-4">The Track</h3>
-                        <p class="text-gray-400">
-                            A 3cm wide black line on white flex. Includes acute angles, 90° turns, crossovers, and a curved bridge. Total length approx 15 meters.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Card 2: Electric Border (Red) -->
-                <div class="electric-border-container bg-deep-black p-8 rounded-xl reveal relative isolate" data-color="#E10600">
-                    <div class="relative z-10">
-                        <div class="w-14 h-14 bg-gray-800 rounded-lg flex items-center justify-center mb-6 text-neon-red">
-                            <i class="fas fa-stopwatch text-2xl"></i>
-                        </div>
-                        <h3 class="font-orbitron text-xl font-bold text-white mb-4">Evaluation</h3>
-                        <p class="text-gray-400">
-                            Primary metric is Time. Penalties added for checkpoints missed or manual touches (resets). The bot with the lowest aggregate time wins.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Card 3: Electric Border (Purple) -->
-                <div class="electric-border-container bg-deep-black p-8 rounded-xl reveal relative isolate" data-color="#A855F7">
-                    <div class="relative z-10">
-                        <div class="w-14 h-14 bg-gray-800 rounded-lg flex items-center justify-center mb-6 text-purple-500">
-                            <i class="fas fa-trophy text-2xl"></i>
-                        </div>
-                        <h3 class="font-orbitron text-xl font-bold text-white mb-4">Structure</h3>
-                        <p class="text-gray-400">
-                            Round 1: Qualifying (Simple Track). <br>
-                            Round 2: Knockout (Complex Track). <br>
-                            Top 3 teams proceed to the "Mystery Element" finale.
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <section
+      id="format"
+      class="py-20 bg-panel-gray relative border-t border-gray-800"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 reveal">
+          <h2 class="text-white font-orbitron text-4xl font-bold mb-2">
+            COMPETITION <span class="text-neon-red">FORMAT</span>
+          </h2>
+          <div class="h-1 w-24 bg-neon-red mx-auto"></div>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Card 1: Electric Border (Blue) -->
+          <div
+            class="electric-border-container bg-deep-black p-8 rounded-xl reveal relative isolate"
+            data-color="#00A3FF"
+          >
+            <div class="relative z-10">
+              <div
+                class="w-14 h-14 bg-gray-800 rounded-lg flex items-center justify-center mb-6 text-neon-blue"
+              >
+                <i class="fas fa-road text-2xl"></i>
+              </div>
+              <h3 class="font-orbitron text-xl font-bold text-white mb-4">
+                The Track
+              </h3>
+              <p class="text-gray-400">
+                A 3cm wide black line on white flex. Includes acute angles, 90°
+                turns, crossovers, and a curved bridge. Total length approx 15
+                meters.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2: Electric Border (Red) -->
+          <div
+            class="electric-border-container bg-deep-black p-8 rounded-xl reveal relative isolate"
+            data-color="#E10600"
+          >
+            <div class="relative z-10">
+              <div
+                class="w-14 h-14 bg-gray-800 rounded-lg flex items-center justify-center mb-6 text-neon-red"
+              >
+                <i class="fas fa-stopwatch text-2xl"></i>
+              </div>
+              <h3 class="font-orbitron text-xl font-bold text-white mb-4">
+                Evaluation
+              </h3>
+              <p class="text-gray-400">
+                Primary metric is Time. Penalties added for checkpoints missed
+                or manual touches (resets). The bot with the lowest aggregate
+                time wins.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3: Electric Border (Purple) -->
+          <div
+            class="electric-border-container bg-deep-black p-8 rounded-xl reveal relative isolate"
+            data-color="#A855F7"
+          >
+            <div class="relative z-10">
+              <div
+                class="w-14 h-14 bg-gray-800 rounded-lg flex items-center justify-center mb-6 text-purple-500"
+              >
+                <i class="fas fa-trophy text-2xl"></i>
+              </div>
+              <h3 class="font-orbitron text-xl font-bold text-white mb-4">
+                Structure
+              </h3>
+              <p class="text-gray-400">
+                The competition will consist of a single round where each team
+                navigates their bot through the track. The completion time of
+                each bot will be recorded, and the team with the lowest time
+                will be declared the winner.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Prizes Section -->
+    <!-- Prizes Section
     <section id="prizes" class="py-20 bg-deep-black">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-center font-orbitron text-4xl font-bold mb-16 reveal">PRIZE POOL</h2>
             
-            <div class="flex flex-col md:flex-row justify-center items-end gap-6 md:gap-8 reveal">
-                
-                <!-- 2nd Place -->
-                <div class="order-2 md:order-1 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
+            <div class="flex flex-col md:flex-row justify-center items-end gap-6 md:gap-8 reveal"> -->
+
+    <!-- 2nd Place -->
+    <!-- <div class="order-2 md:order-1 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
                     <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center border-4 border-deep-black font-bold text-black">2</div>
                     <h3 class="mt-8 font-orbitron text-xl text-gray-300">Runner Up</h3>
                     <p class="text-3xl font-bold text-white mt-2">$300</p>
                     <p class="text-sm text-gray-500 mt-2">+ Certificates</p>
-                </div>
+                </div> -->
 
-                <!-- 1st Place -->
-                <div class="order-1 md:order-2 w-full md:w-1/3 bg-gray-900 border-2 border-neon-blue p-8 rounded-t-xl text-center relative shadow-glow-blue transform scale-105 z-10">
+    <!-- 1st Place -->
+    <!-- <div class="order-1 md:order-2 w-full md:w-1/3 bg-gray-900 border-2 border-neon-blue p-8 rounded-t-xl text-center relative shadow-glow-blue transform scale-105 z-10">
                     <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-yellow-400 flex items-center justify-center border-4 border-deep-black font-bold text-black text-xl">1</div>
                     <div class="text-neon-blue text-sm font-bold tracking-widest mb-2">CHAMPION</div>
                     <h3 class="font-orbitron text-2xl text-white">Winner</h3>
                     <p class="text-5xl font-bold text-white mt-2">$700</p>
                     <p class="text-sm text-gray-400 mt-4">+ Trophy & Merchandise</p>
                     <p class="text-sm text-gray-400">Internship Opportunity</p>
-                </div>
+                </div> -->
 
-                <!-- 3rd Place -->
-                <div class="order-3 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
+    <!-- 3rd Place -->
+    <!-- <div class="order-3 w-full md:w-1/4 bg-[#1a1a1a] border border-gray-700 p-6 rounded-t-xl text-center relative hover:scale-105 transition duration-300">
                     <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-yellow-700 flex items-center justify-center border-4 border-deep-black font-bold text-black">3</div>
                     <h3 class="mt-8 font-orbitron text-xl text-yellow-700">2nd Runner Up</h3>
                     <p class="text-3xl font-bold text-white mt-2">$150</p>
@@ -512,349 +651,850 @@
 
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Timeline -->
     <section id="timeline" class="py-20 bg-panel-gray border-t border-gray-800">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-center font-orbitron text-4xl font-bold mb-12 reveal">EVENT TIMELINE</h2>
-            
-            <div class="relative border-l-2 border-gray-700 ml-4 md:ml-0 md:pl-0 space-y-12">
-                <!-- Line center for desktop -->
-                <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-700 transform -translate-x-1/2"></div>
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-center font-orbitron text-4xl font-bold mb-12 reveal">
+          EVENT TIMELINE
+        </h2>
 
-                <!-- Item 1 -->
-                <div class="relative md:flex justify-between items-center w-full reveal">
-                    <div class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0">
-                        <h3 class="text-neon-blue font-bold text-xl">Registration Opens</h3>
-                        <span class="text-gray-500 text-sm">March 10, 2026</span>
-                    </div>
-                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-neon-red rounded-full border-4 border-deep-black shadow-[0_0_10px_red]"></div>
-                    <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0">
-                        <p class="text-gray-400 text-sm">Online portal opens. Team formation begins.</p>
-                    </div>
-                </div>
+        <div
+          class="relative border-l-2 border-gray-700 ml-4 md:ml-0 md:pl-0 space-y-12"
+        >
+          <!-- Line center for desktop -->
+          <div
+            class="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-700 transform -translate-x-1/2"
+          ></div>
 
-                <!-- Item 2 -->
-                <div class="relative md:flex justify-between items-center w-full reveal">
-                    <div class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0 order-1">
-                        <p class="text-gray-400 text-sm">Technical check of bots (Dimensions, Weight, Safety).</p>
-                    </div>
-                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"></div>
-                    <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0 order-2">
-                        <h3 class="text-white font-bold text-xl">Bot Scrutiny</h3>
-                        <span class="text-gray-500 text-sm">April 05, 2026 - 09:00 AM</span>
-                    </div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="relative md:flex justify-between items-center w-full reveal">
-                    <div class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0">
-                        <h3 class="text-white font-bold text-xl">Competition Start</h3>
-                        <span class="text-gray-500 text-sm">April 05, 2026 - 11:00 AM</span>
-                    </div>
-                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"></div>
-                    <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0">
-                        <p class="text-gray-400 text-sm">Qualifying rounds begin. Best track time recorded.</p>
-                    </div>
-                </div>
+          <!-- Item 1 -->
+          <div
+            class="relative md:flex justify-between items-center w-full reveal"
+          >
+            <div
+              class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0"
+            >
+              <h3 class="text-neon-blue font-bold text-xl">
+                Registration Opens
+              </h3>
+              <span class="text-gray-500 text-sm">March 10, 2026</span>
             </div>
+            <div
+              class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-neon-red rounded-full border-4 border-deep-black shadow-[0_0_10px_red]"
+            ></div>
+            <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0">
+              <p class="text-gray-400 text-sm">
+                Online portal opens. Team formation begins.
+              </p>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div
+            class="relative md:flex justify-between items-center w-full reveal"
+          >
+            <div
+              class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0 order-1"
+            >
+              <p class="text-gray-400 text-sm">
+                Hands-on workshop where participants will learn how combat
+                robots work and get the opportunity to build their own bot with
+                guidance from mentors.
+              </p>
+            </div>
+            <div
+              class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"
+            ></div>
+            <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0 order-2">
+              <h3 class="text-white font-bold text-xl">
+                Bot Building Workshop
+              </h3>
+              <span class="text-gray-500 text-sm"
+                >March 14, 2026 - 09:00 AM</span
+              >
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div
+            class="relative md:flex justify-between items-center w-full reveal"
+          >
+            <div
+              class="md:w-5/12 text-left md:text-right md:pr-8 mb-2 md:mb-0 ml-8 md:ml-0"
+            >
+              <h3 class="text-white font-bold text-xl">Competition Start</h3>
+              <span class="text-gray-500 text-sm"
+                >April 15, 2026 - 11:00 AM</span
+              >
+            </div>
+            <div
+              class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-neon-blue rounded-full border-4 border-deep-black"
+            ></div>
+            <div class="md:w-5/12 md:pl-8 ml-8 md:ml-0">
+              <p class="text-gray-400 text-sm">
+                Qualifying rounds begin. Best track time recorded.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Registration Section -->
     <section id="register" class="py-24 relative overflow-hidden">
-        <!-- Decoration -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-neon-red/10 rounded-full blur-3xl -z-10"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-neon-blue/10 rounded-full blur-3xl -z-10"></div>
+      <!-- Decoration -->
+      <div
+        class="absolute top-0 right-0 w-64 h-64 bg-neon-red/10 rounded-full blur-3xl -z-10"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-64 h-64 bg-neon-blue/10 rounded-full blur-3xl -z-10"
+      ></div>
 
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-[#151515] border-2 border-neon-red rounded-2xl p-8 md:p-12 shadow-glow-red reveal relative overflow-hidden">
-                <!-- Glowing line animation inside card -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon-red to-transparent animate-pulse"></div>
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="bg-[#151515] border-2 border-neon-red rounded-2xl p-8 md:p-12 shadow-glow-red reveal relative overflow-hidden"
+        >
+          <!-- Glowing line animation inside card -->
+          <div
+            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon-red to-transparent animate-pulse"
+          ></div>
 
-                <div class="text-center mb-10">
-                    <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white mb-2">JOIN THE <span class="text-neon-red">RACE</span></h2>
-                    <p class="text-gray-400">Limited slots available. Register before March 30th.</p>
+          <div class="text-center mb-10">
+            <h2
+              class="font-orbitron text-3xl md:text-4xl font-bold text-white mb-2"
+            >
+              JOIN THE <span class="text-neon-red">RACE</span>
+            </h2>
+            <p class="text-gray-400">
+              Limited slots available. Register before March 11th.
+            </p>
+          </div>
+
+          <form id="regForm" class="space-y-6">
+            <!-- Team Name -->
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2"
+                >Team Name <span class="text-neon-red">*</span></label
+              >
+              <input
+                type="text"
+                name="teamName"
+                required
+                class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                placeholder="e.g. Circuit Breakers"
+              />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Team Leader Name -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2"
+                  >Team Leader Name <span class="text-neon-red">*</span></label
+                >
+                <input
+                  type="text"
+                  name="leaderName"
+                  required
+                  class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                  placeholder="Full Name"
+                />
+              </div>
+              <!-- Branch -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2"
+                  >Branch <span class="text-neon-red">*</span></label
+                >
+                <select
+                  name="leaderbranch"
+                  required
+                  class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                >
+                  <option value="" disabled selected>Select your branch</option>
+                  <option value="CSE">Computer Science and Engineering</option>
+                  <option value="AIML">
+                    Computer Science and Engineering (AI ML)
+                  </option>
+                  <option value="ETC">
+                    Electronics & TeleCommunication Engineering
+                  </option>
+                  <option value="EEE">
+                    Electrical And Electronics Engineering
+                  </option>
+                  <option value="EE">Electrical Engineering</option>
+                  <option value="ME">Mechanical Engineering</option>
+                  <option value="CE">Civil Engineering</option>
+                  <option value="CE">
+                    Metallurgical & Materials Engineering
+                  </option>
+                  <option value="CE">Production Engineering</option>
+                  <option value="CE">Smart Manufacturing Engineering</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Team Leader Regd No -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2"
+                  >Team Leader Regd No.
+                  <span class="text-neon-red">*</span></label
+                >
+                <input
+                  type="text"
+                  name="leaderRegdNo"
+                  required
+                  class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                  placeholder="e.g. 250XXXXXXX"
+                />
+              </div>
+              <!-- Team Size -->
+            </div>
+
+            <!-- Dynamic Member Fields -->
+            <div id="memberFields" class="space-y-4">
+              <!-- Member 2 -->
+              <div class="member-field">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Member 2 Name -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Member 2 Name <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      name="member2Name"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                      placeholder="Full Name"
+                    />
+                  </div>
+                  <!-- Branch -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Branch <span class="text-neon-red">*</span></label
+                    >
+                    <select
+                      name="member2branch"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                    >
+                      <option value="" disabled selected>
+                        Select your branch
+                      </option>
+                      <option value="CSE">
+                        Computer Science and Engineering
+                      </option>
+                      <option value="AIML">
+                        Computer Science and Engineering (AI ML)
+                      </option>
+                      <option value="ETC">
+                        Electronics & TeleCommunication Engineering
+                      </option>
+                      <option value="EEE">
+                        Electrical And Electronics Engineering
+                      </option>
+                      <option value="EE">Electrical Engineering</option>
+                      <option value="ME">Mechanical Engineering</option>
+                      <option value="CE">Civil Engineering</option>
+                      <option value="CE">
+                        Metallurgical & Materials Engineering
+                      </option>
+                      <option value="CE">Production Engineering</option>
+                      <option value="CE">
+                        Smart Manufacturing Engineering
+                      </option>
+                    </select>
+                  </div>
                 </div>
 
-                <form id="regForm" class="space-y-6">
-                    <!-- Team Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Member 2 Regd No -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Member 2 Regd No.
+                      <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      name="member2RegdNo"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                      placeholder="e.g. 250XXXXXXX"
+                    />
+                  </div>
+                </div>
+              </div>
+              <!-- Member 3 -->
+              <div class="member-field">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" >
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Team Name <span class="text-neon-red">*</span></label>
-                        <input type="text" name="teamName" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. Circuit Breakers">
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                        >Member 3 Name <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                        type="text"
+                        name="member3Name"
+                        required
+                        class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                        placeholder="Full Name"
+                    />
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Team Leader Name -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Team Leader Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="leaderName" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="Full Name">
-                        </div>
-                        <!-- Branch -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Branch <span class="text-neon-red">*</span></label>
-                            <input type="text" name="branch" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. Computer Science">
-                        </div>
+                    <!-- Branch -->
+                    <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                        >Branch <span class="text-neon-red">*</span></label
+                    >
+                    <select
+                        name="member3branch"
+                        required
+                        class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                    >
+                        <option value="" disabled selected>
+                        Select your branch
+                        </option>
+                        <option value="CSE">
+                        Computer Science and Engineering
+                        </option>
+                        <option value="AIML">
+                        Computer Science and Engineering (AI ML)
+                        </option>
+                        <option value="ETC">
+                        Electronics & TeleCommunication Engineering
+                        </option>
+                        <option value="EEE">
+                        Electrical And Electronics Engineering
+                        </option>
+                        <option value="EE">Electrical Engineering</option>
+                        <option value="ME">Mechanical Engineering</option>
+                        <option value="CE">Civil Engineering</option>
+                        <option value="CE">
+                        Metallurgical & Materials Engineering
+                        </option>
+                        <option value="CE">Production Engineering</option>
+                        <option value="CE">Smart Manufacturing Engineering</option>
+                    </select>
                     </div>
+              </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Team Leader Regd No -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Team Leader Regd No. <span class="text-neon-red">*</span></label>
-                            <input type="text" name="leaderRegdNo" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition" placeholder="e.g. 250XXXXXXX">
-                        </div>
-                        <!-- Team Size -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Team Size <span class="text-neon-red">*</span></label>
-                            <select name="teamSize" id="teamSize" required onchange="updateMemberFields()" class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition cursor-pointerm text-gray-400 mb-1">Team Size</label>
-">
-                                <option value="">Select Team Size</option>
-                                <option value="4">4 Members</option>
-                                <option value="5">5 Members</option>
-                            </select>
-                        </div>
-                    </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Member 3 Regd No -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-400 mb-2"
+                    >Member 3 Regd No.
+                    <span class="text-neon-red">*</span></label
+                  >
+                  <input
+                    type="text"
+                    name="member3RegdNo"
+                    required
+                    class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                    placeholder="e.g. 250XXXXXXX"
+                  />
+                </div>
+              </div>
+              <!-- Member 4 -->
+              <div class="member-field">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Member 4 Name <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      name="member4Name"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                      placeholder="Full Name"
+                    />
+                  </div>
+                  <!-- Branch -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Branch <span class="text-neon-red">*</span></label
+                    >
+                    <select
+                      name="member4branch"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                    >
+                      <option value="" disabled selected>
+                        Select your branch
+                      </option>
+                      <option value="CSE">
+                        Computer Science and Engineering
+                      </option>
+                      <option value="AIML">
+                        Computer Science and Engineering (AI ML)
+                      </option>
+                      <option value="ETC">
+                        Electronics & TeleCommunication Engineering
+                      </option>
+                      <option value="EEE">
+                        Electrical And Electronics Engineering
+                      </option>
+                      <option value="EE">Electrical Engineering</option>
+                      <option value="ME">Mechanical Engineering</option>
+                      <option value="CE">Civil Engineering</option>
+                      <option value="CE">
+                        Metallurgical & Materials Engineering
+                      </option>
+                      <option value="CE">Production Engineering</option>
+                      <option value="CE">
+                        Smart Manufacturing Engineering
+                      </option>
+                    </select>
+                  </div>
+                </div>
 
-                    <!-- Dynamic Member Fields -->
-                    <div id="memberFields" class="space-y-4">
-                        <!-- Member 2 -->
-                        <div class="member-field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 2 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member2" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 2 Name">
-                        </div>
-                        <!-- Member 3 -->
-                        <div class="member-field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 3 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member3" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 3 Name">
-                        </div>
-                        <!-- Member 4 -->
-                        <div class="member-field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 4 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member4" required class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 4 Name">
-                        </div>
-                        <!-- Member 5 (Hidden by default) -->
-                        <div class="member-field hidden" id="member5Field">
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Member 5 Name <span class="text-neon-red">*</span></label>
-                            <input type="text" name="member5" class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition" placeholder="Member 5 Name">
-                        </div>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Member 4 Regd No -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Member 4 Regd No.
+                      <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      name="member4RegdNo"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                      placeholder="e.g. 250XXXXXXX"
+                    />
+                  </div>
+                </div>
+              </div>
+              <!-- Member 5  -->
+              <div class="member-field" id="member5Field">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Member 5 Name <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      name="member5Name"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                      placeholder="Full Name"
+                    />
+                  </div>
+                  <!-- Branch -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Branch <span class="text-neon-red">*</span></label
+                    >
+                    <select
+                      name="member5branch"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                    >
+                      <option value="" disabled selected>
+                        Select your branch
+                      </option>
+                      <option value="CSE">
+                        Computer Science and Engineering
+                      </option>
+                      <option value="AIML">
+                        Computer Science and Engineering (AI ML)
+                      </option>
+                      <option value="ETC">
+                        Electronics & TeleCommunication Engineering
+                      </option>
+                      <option value="EEE">
+                        Electrical And Electronics Engineering
+                      </option>
+                      <option value="EE">Electrical Engineering</option>
+                      <option value="ME">Mechanical Engineering</option>
+                      <option value="CE">Civil Engineering</option>
+                      <option value="CE">
+                        Metallurgical & Materials Engineering
+                      </option>
+                      <option value="CE">Production Engineering</option>
+                      <option value="CE">
+                        Smart Manufacturing Engineering
+                      </option>
+                    </select>
+                  </div>
+                </div>
 
-                    <!-- Payment Section -->
-                    <div class="border-t border-gray-800 pt-6 mt-8">
-                        <h3 class="text-white font-orbitron text-xl font-bold mb-6 text-center">Payment Details</h3>
-                        
-                        <!-- QR Code Section -->
-                        <div class="bg-[#0B0B0B] border-2 border-dashed border-gray-700 rounded-xl p-6 mb-6 text-center">
-                            <p class="text-gray-400 text-sm mb-4">Scan QR Code to Make Payment</p>
-                            <div class="flex justify-center items-center bg-white rounded-lg p-4 mx-auto w-fit">
-                                <!-- QR Code Image -->
-                                <img src="roboxplore.jpeg" alt="Payment QR Code" class="w-48 h-48 object-contain" />
-                            </div>
-                            <p class="text-neon-red font-bold text-lg mt-4">Registration Fee: ₹30</p>
-                            <p class="text-gray-500 text-xs mt-2">UPI ID: vasudevgantayada1-1@okicici</p>
-                        </div>
-
-                        <!-- File Upload Section -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Upload Screenshot of Payment <span class="text-neon-red">*</span></label>
-                            <div class="relative">
-                                <input type="file" name="paymentScreenshot" id="paymentScreenshot" required accept="image/*" class="hidden" onchange="handleFileUpload(this)">
-                                <label for="paymentScreenshot" class="w-full bg-[#0B0B0B] border-2 border-dashed border-gray-700 rounded-lg px-4 py-8 text-center cursor-pointer hover:border-neon-blue transition flex flex-col items-center justify-center">
-                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-600 mb-3"></i>
-                                    <span class="text-gray-400" id="fileLabel">Click to upload or drag and drop</span>
-                                    <span class="text-gray-600 text-xs mt-2">PNG, JPG or JPEG (MAX. 5MB)</span>
-                                </label>
-                            </div>
-                            <div id="filePreview" class="mt-4 hidden">
-                                <div class="bg-[#0B0B0B] border border-gray-700 rounded-lg p-3 flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fas fa-file-image text-neon-blue text-xl"></i>
-                                        <span class="text-white text-sm" id="fileName"></span>
-                                    </div>
-                                    <button type="button" onclick="removeFile()" class="text-neon-red hover:text-red-400 transition">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4"></div>
-                        <button type="submit" class="w-full btn-tech btn-tech-primary py-4 text-lg mb-4">
-                            CONFIRM REGISTRATION
-                        </button>
-                        
-                        <!-- Info & Privacy Trigger -->
-                        <div class="text-center space-y-3">
-                            <div class="flex items-start justify-center gap-2 text-xs text-gray-500">
-                                <i class="fas fa-info-circle mt-0.5 text-neon-blue"></i>
-                                <p class="text-left max-w-xs">
-                                    <span class="text-gray-400 font-semibold">Payment Notice:</span> 
-                                    Registration fee is non-refundable. Please ensure all team details are final before submitting.
-                                </p>
-                            </div>
-                            
-                            <p class="text-xs text-gray-600">
-                                By registering, you agree to our 
-                                <button type="button" onclick="openDrawer()" class="text-neon-red hover:text-white underline decoration-dotted underline-offset-4 transition-colors">
-                                    Privacy Policy & Terms
-                                </button>
-                            </p>
-                        </div>
-                    </div>
-                </form>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Member 5 Regd No -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2"
+                      >Member 5 Regd No.
+                      <span class="text-neon-red">*</span></label
+                    >
+                    <input
+                      type="text"
+                      name="member5RegdNo"
+                      required
+                      class="w-full bg-[#0B0B0B] border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-red focus:ring-1 focus:ring-neon-red transition"
+                      placeholder="e.g. 250XXXXXXX"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Payment Section -->
+            <div class="border-t border-gray-800 pt-6 mt-8">
+              <h3
+                class="text-white font-orbitron text-xl font-bold mb-6 text-center"
+              >
+                Payment Details
+              </h3>
+
+              <!-- QR Code Section -->
+              <div
+                class="bg-[#0B0B0B] border-2 border-dashed border-gray-700 rounded-xl p-6 mb-6 text-center"
+              >
+                <p class="text-gray-400 text-sm mb-4">
+                  Scan QR Code to Make Payment
+                </p>
+                <div
+                  class="flex justify-center items-center bg-white rounded-lg p-4 mx-auto w-fit"
+                >
+                  <!-- QR Code Image -->
+                  <img
+                    src="roboxplore.jpeg"
+                    alt="Payment QR Code"
+                    class="w-48 h-48 object-contain"
+                  />
+                </div>
+                <p class="text-neon-red font-bold text-lg mt-4">
+                  Registration Fee: ₹50 / Member
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                  UPI ID: vasudevgantayada1-1@okicici
+                </p>
+              </div>
+
+              <!-- File Upload Section -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2"
+                  >Upload Screenshot of Payment
+                  <span class="text-neon-red">*</span></label
+                >
+                <div class="relative">
+                  <input
+                    type="file"
+                    name="paymentScreenshot"
+                    id="paymentScreenshot"
+                    required
+                    accept="image/*"
+                    class="hidden"
+                    onchange="handleFileUpload(this)"
+                  />
+                  <label
+                    for="paymentScreenshot"
+                    class="w-full bg-[#0B0B0B] border-2 border-dashed border-gray-700 rounded-lg px-4 py-8 text-center cursor-pointer hover:border-neon-blue transition flex flex-col items-center justify-center"
+                  >
+                    <i
+                      class="fas fa-cloud-upload-alt text-4xl text-gray-600 mb-3"
+                    ></i>
+                    <span class="text-gray-400" id="fileLabel"
+                      >Click to upload or drag and drop</span
+                    >
+                    <span class="text-gray-600 text-xs mt-2"
+                      >PNG, JPG or JPEG (MAX. 5MB)</span
+                    >
+                  </label>
+                </div>
+                <div id="filePreview" class="mt-4 hidden">
+                  <div
+                    class="bg-[#0B0B0B] border border-gray-700 rounded-lg p-3 flex items-center justify-between"
+                  >
+                    <div class="flex items-center gap-3">
+                      <i class="fas fa-file-image text-neon-blue text-xl"></i>
+                      <span class="text-white text-sm" id="fileName"></span>
+                    </div>
+                    <button
+                      type="button"
+                      onclick="removeFile()"
+                      class="text-neon-red hover:text-red-400 transition"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4">
+              <button
+                type="submit"
+                class="w-full btn-tech btn-tech-primary py-4 text-lg mb-4"
+              >
+                CONFIRM REGISTRATION
+              </button>
+            </div>
+
+            <!-- Info & Privacy Trigger -->
+            <div class="text-center space-y-3">
+              <div
+                class="flex items-start justify-center gap-2 text-xs text-gray-500"
+              >
+                <i class="fas fa-info-circle mt-0.5 text-neon-blue"></i>
+                <p class="text-left max-w-xs">
+                  <span class="text-gray-400 font-semibold"
+                    >Payment Notice:</span
+                  >
+                  Registration fee is non-refundable. Please ensure all team
+                  details are final before submitting.
+                </p>
+              </div>
+
+              <p class="text-xs text-gray-600">
+                By registering, you agree to our
+                <button
+                  type="button"
+                  onclick="openDrawer()"
+                  class="text-neon-red hover:text-white underline decoration-dotted underline-offset-4 transition-colors"
+                >
+                  Privacy Policy & Terms
+                </button>
+              </p>
+            </div>
+          </form>
         </div>
+      </div>
     </section>
 
     <!-- === BOTTOM DRAWER (Privacy Policy) === -->
     <!-- Overlay -->
-    <div id="drawer-overlay" class="fixed inset-0 bg-black/80 z-[60] hidden opacity-0 transition-opacity duration-300" onclick="closeDrawer()"></div>
+    <div
+      id="drawer-overlay"
+      class="fixed inset-0 bg-black/80 z-[60] hidden opacity-0 transition-opacity duration-300"
+      onclick="closeDrawer()"
+    ></div>
 
     <!-- Drawer Panel -->
-    <div id="drawer" class="fixed bottom-0 left-0 right-0 z-[70] bg-[#151515] rounded-t-[20px] transform translate-y-full transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1) border-t border-neon-red/30 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh] md:max-h-[60vh] max-w-4xl mx-auto">
-        
-        <!-- Drawer Handle -->
-        <div class="mx-auto w-16 h-1.5 flex-shrink-0 rounded-full bg-gray-700 my-4 cursor-pointer hover:bg-gray-500 transition-colors" onclick="closeDrawer()"></div>
-        
-        <!-- Drawer Header -->
-        <div class="px-6 pb-2 text-center md:text-left">
-            <h2 class="text-2xl font-orbitron font-bold text-white mb-1">Privacy Policy & Terms</h2>
-            <p class="text-gray-500 text-sm">Last updated: March 01, 2026</p>
+    <div
+      id="drawer"
+      class="fixed bottom-0 left-0 right-0 z-[70] bg-[#151515] rounded-t-[20px] transform translate-y-full transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1) border-t border-neon-red/30 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh] md:max-h-[60vh] max-w-4xl mx-auto"
+    >
+      <!-- Drawer Handle -->
+      <div
+        class="mx-auto w-16 h-1.5 flex-shrink-0 rounded-full bg-gray-700 my-4 cursor-pointer hover:bg-gray-500 transition-colors"
+        onclick="closeDrawer()"
+      ></div>
+
+      <!-- Drawer Header -->
+      <div class="px-6 pb-2 text-center md:text-left">
+        <h2 class="text-2xl font-orbitron font-bold text-white mb-1">
+          Privacy Policy & Terms
+        </h2>
+        <p class="text-gray-500 text-sm">Last updated: March 01, 2026</p>
+      </div>
+
+      <!-- Drawer Body (Scrollable) -->
+      <div
+        class="px-6 py-4 overflow-y-auto flex-1 text-gray-300 text-sm leading-relaxed space-y-6 custom-drawer-scroll"
+      >
+        <div class="p-4 bg-deep-black rounded-lg border border-gray-800">
+          <h3 class="text-neon-blue font-bold mb-2 flex items-center gap-2">
+            <i class="fas fa-shield-alt"></i> Data Collection
+          </h3>
+          <p>
+            We collect team details solely for the purpose of the RoboXplore
+            competition. Your email and phone number will be used to send event
+            schedules, rulebook updates, and prize notifications. We do not sell
+            your data to third-party advertisers.
+          </p>
         </div>
 
-        <!-- Drawer Body (Scrollable) -->
-        <div class="px-6 py-4 overflow-y-auto flex-1 text-gray-300 text-sm leading-relaxed space-y-6 custom-drawer-scroll">
-            
-            <div class="p-4 bg-deep-black rounded-lg border border-gray-800">
-                <h3 class="text-neon-blue font-bold mb-2 flex items-center gap-2">
-                    <i class="fas fa-shield-alt"></i> Data Collection
-                </h3>
-                <p>We collect team details solely for the purpose of the RoboXplore competition. Your email and phone number will be used to send event schedules, rulebook updates, and prize notifications. We do not sell your data to third-party advertisers.</p>
-            </div>
-
-            <div>
-                <h3 class="text-white font-bold mb-2">1. Registration & Payments</h3>
-                <p class="mb-2">All registration fees must be paid via the payment gateway linked in the confirmation email. <span class="text-neon-red">Fees are strictly non-refundable</span> once processed, even if a team withdraws.</p>
-            </div>
-
-            <div>
-                <h3 class="text-white font-bold mb-2">2. Team Structure</h3>
-                <p>Teams cannot change their members after the "Bot Scrutiny" phase begins. Any substitution requests must be emailed to the organizers 48 hours prior to the event.</p>
-            </div>
-
-            <div>
-                <h3 class="text-white font-bold mb-2">3. Media Rights</h3>
-                <p>By participating, you grant RoboXplore the rights to use photographs and footage of your team and robot for promotional purposes on social media and our website.</p>
-            </div>
-
-            <div>
-                <h3 class="text-white font-bold mb-2">4. Disqualification</h3>
-                <p>Unsportsmanlike conduct, intentional damage to the track, or sabotage of other bots will lead to immediate disqualification without refund.</p>
-            </div>
-            
-            <p class="text-xs text-gray-500 italic mt-8 text-center">
-                Scroll to read all terms. Clicking "I Understand" below acknowledges these terms.
-            </p>
+        <div>
+          <h3 class="text-white font-bold mb-2">1. Registration & Payments</h3>
+          <p class="mb-2">
+            All registration fees must be paid via the payment gateway linked in
+            the confirmation email.
+            <span class="text-neon-red">Fees are strictly non-refundable</span>
+            once processed, even if a team withdraws.
+          </p>
         </div>
 
-        <!-- Drawer Footer -->
-        <div class="p-6 border-t border-gray-800 bg-[#151515] rounded-b-none md:rounded-b-none">
-            <div class="flex gap-4">
-                <button onclick="closeDrawer()" class="flex-1 py-3 rounded-lg border border-gray-600 text-gray-300 font-bold hover:bg-gray-800 transition">
-                    Close
-                </button>
-                <button onclick="closeDrawer()" class="flex-1 py-3 rounded-lg bg-neon-red text-white font-bold shadow-glow-red hover:bg-red-700 transition">
-                    I Understand
-                </button>
-            </div>
+        <div>
+          <h3 class="text-white font-bold mb-2">2. Team Structure</h3>
+          <p>
+            Teams cannot change their members after the "Bot Scrutiny" phase
+            begins. Any substitution requests must be emailed to the organizers
+            48 hours prior to the event.
+          </p>
         </div>
+
+        <div>
+          <h3 class="text-white font-bold mb-2">3. Media Rights</h3>
+          <p>
+            By participating, you grant RoboXplore the rights to use photographs
+            and footage of your team and robot for promotional purposes on
+            social media and our website.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-white font-bold mb-2">4. Disqualification</h3>
+          <p>
+            Unsportsmanlike conduct, intentional damage to the track, or
+            sabotage of other bots will lead to immediate disqualification
+            without refund.
+          </p>
+        </div>
+
+        <p class="text-xs text-gray-500 italic mt-8 text-center">
+          Scroll to read all terms. Clicking "I Understand" below acknowledges
+          these terms.
+        </p>
+      </div>
+
+      <!-- Drawer Footer -->
+      <div
+        class="p-6 border-t border-gray-800 bg-[#151515] rounded-b-none md:rounded-b-none"
+      >
+        <div class="flex gap-4">
+          <button
+            onclick="closeDrawer()"
+            class="flex-1 py-3 rounded-lg border border-gray-600 text-gray-300 font-bold hover:bg-gray-800 transition"
+          >
+            Close
+          </button>
+          <button
+            onclick="closeDrawer()"
+            class="flex-1 py-3 rounded-lg bg-neon-red text-white font-bold shadow-glow-red hover:bg-red-700 transition"
+          >
+            I Understand
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="bg-black border-t border-gray-900 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-                <div class="mb-6 md:mb-0 text-center md:text-left">
-                    <span class="font-orbitron text-2xl font-bold tracking-wider text-white">
-                        ROBO<span class="text-neon-red">X</span>PLORE
-                    </span>
-                    <p class="text-gray-500 mt-2 text-sm">Organized by VSSUT Robotics Society</p>
-                </div>
-                
-                <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-2xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter text-2xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-envelope text-2xl"></i></a>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-900 pt-8 text-center md:flex md:justify-between">
-                <p class="text-gray-600 text-sm">© 2026 RoboXplore Competition. All rights reserved.</p>
-                <div class="flex justify-center space-x-6 mt-4 md:mt-0 text-sm text-gray-600">
-                    <a href="#" class="hover:text-gray-400">Privacy</a>
-                    <a href="#" class="hover:text-gray-400">Terms</a>
-                    <a href="#" class="hover:text-gray-400">Contact</a>
-                </div>
-            </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center mb-8"
+        >
+          <div class="mb-6 md:mb-0 text-center md:text-left">
+            <span
+              class="font-orbitron text-2xl font-bold tracking-wider text-white"
+            >
+              ROBO<span class="text-neon-red">X</span>PLORE
+            </span>
+            <p class="text-gray-500 mt-2 text-sm">
+              Organized by VSSUT Robotics Society
+            </p>
+          </div>
+
+          <div class="flex space-x-6">
+            <a
+              href="https://www.instagram.com/vssut_robotics/?hl=en"
+              class="text-gray-400 hover:text-white transition"
+              ><i class="fab fa-instagram text-2xl"></i
+            ></a>
+            <a
+              href="https://www.linkedin.com/company/vssutrobotics/posts/?feedView=all"
+              class="text-gray-400 hover:text-white transition"
+              ><i class="fab fa-linkedin text-2xl"></i
+            ></a>
+            <a href="#" class="text-gray-400 hover:text-white transition"
+              ><i class="fas fa-envelope text-2xl"></i
+            ></a>
+          </div>
         </div>
+
+        <div
+          class="border-t border-gray-900 pt-8 text-center md:flex md:justify-between"
+        >
+          <p class="text-gray-600 text-sm">
+            © 2026 RoboXplore Competition. All rights reserved.
+          </p>
+          <div
+            class="flex justify-center space-x-6 mt-4 md:mt-0 text-sm text-gray-600"
+          >
+            <a href="#" class="hover:text-gray-400">Privacy</a>
+            <a href="#" class="hover:text-gray-400">Terms</a>
+            <a href="#" class="hover:text-gray-400">Contact</a>
+          </div>
+        </div>
+      </div>
     </footer>
 
     <!-- Scripts -->
     <script>
-        // --- 1. Bubble Menu Logic ---
-        let isMenuOpen = false;
-        const toggleBtn = document.querySelector('.toggle-bubble');
-        const overlay = document.querySelector('.bubble-menu-items');
-        const links = document.querySelectorAll('.pill-link');
-        const labels = document.querySelectorAll('.pill-label');
-        
-        function toggleBubbleMenu() {
-            isMenuOpen = !isMenuOpen;
-            if (isMenuOpen) {
-                toggleBtn.classList.add('open');
-                gsap.set(overlay, { display: 'flex' });
-                gsap.killTweensOf(links);
-                gsap.killTweensOf(labels);
-                gsap.set(links, { scale: 0, rotation: 0 }); 
-                gsap.set(labels, { y: 24, autoAlpha: 0 });
-                links.forEach((link, i) => {
-                    const delay = i * 0.1;
-                    const tl = gsap.timeline({ delay: delay });
-                    const targetRotation = link.style.getPropertyValue('--rotation') || '0deg';
-                    const rotVal = parseFloat(targetRotation.replace('deg','')) || 0;
-                    const isDesktop = window.innerWidth >= 900;
-                    const finalRotation = isDesktop ? rotVal : 0;
-                    tl.to(link, { scale: 1, rotation: finalRotation, duration: 0.5, ease: 'back.out(1.5)' });
-                    tl.to(labels[i], { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power3.out' }, "-=0.3");
-                });
-            } else {
-                closeBubbleMenu();
-            }
+      // --- 1. Bubble Menu Logic ---
+      let isMenuOpen = false
+      const toggleBtn = document.querySelector('.toggle-bubble')
+      const overlay = document.querySelector('.bubble-menu-items')
+      const links = document.querySelectorAll('.pill-link')
+      const labels = document.querySelectorAll('.pill-label')
+
+      function toggleBubbleMenu() {
+        isMenuOpen = !isMenuOpen
+        if (isMenuOpen) {
+          toggleBtn.classList.add('open')
+          gsap.set(overlay, { display: 'flex' })
+          gsap.killTweensOf(links)
+          gsap.killTweensOf(labels)
+          gsap.set(links, { scale: 0, rotation: 0 })
+          gsap.set(labels, { y: 24, autoAlpha: 0 })
+          links.forEach((link, i) => {
+            const delay = i * 0.1
+            const tl = gsap.timeline({ delay: delay })
+            const targetRotation =
+              link.style.getPropertyValue('--rotation') || '0deg'
+            const rotVal = parseFloat(targetRotation.replace('deg', '')) || 0
+            const isDesktop = window.innerWidth >= 900
+            const finalRotation = isDesktop ? rotVal : 0
+            tl.to(link, {
+              scale: 1,
+              rotation: finalRotation,
+              duration: 0.5,
+              ease: 'back.out(1.5)',
+            })
+            tl.to(
+              labels[i],
+              { y: 0, autoAlpha: 1, duration: 0.4, ease: 'power3.out' },
+              '-=0.3'
+            )
+          })
+        } else {
+          closeBubbleMenu()
         }
+      }
 
-        function closeBubbleMenu() {
-            isMenuOpen = false;
-            toggleBtn.classList.remove('open');
-            gsap.to(labels, { y: 24, autoAlpha: 0, duration: 0.2, ease: 'power3.in' });
-            gsap.to(links, {
-                scale: 0, duration: 0.3, ease: 'power3.in', stagger: 0.05,
-                onComplete: () => { gsap.set(overlay, { display: 'none' }); }
-            });
-        }
+      function closeBubbleMenu() {
+        isMenuOpen = false
+        toggleBtn.classList.remove('open')
+        gsap.to(labels, {
+          y: 24,
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: 'power3.in',
+        })
+        gsap.to(links, {
+          scale: 0,
+          duration: 0.3,
+          ease: 'power3.in',
+          stagger: 0.05,
+          onComplete: () => {
+            gsap.set(overlay, { display: 'none' })
+          },
+        })
+      }
 
-        // --- 2. Countdown Timer ---
-        const targetDate = new Date('March 15, 2026 00:00:00'); 
+      // --- 2. Countdown Timer ---
+      const targetDate = new Date('March 15, 2026 00:00:00')
 
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            const timerHTML = `
+      function updateCountdown() {
+        const now = new Date().getTime()
+        const distance = targetDate - now
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        )
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+        const timerHTML = `
                 <div class="text-center"><span class="block text-3xl md:text-5xl font-bold text-white">${days}</span><span class="text-xs text-gray-500 uppercase">Days</span></div>
                 <div class="text-3xl md:text-5xl font-bold text-gray-600">:</div>
                 <div class="text-center"><span class="block text-3xl md:text-5xl font-bold text-white">${hours}</span><span class="text-xs text-gray-500 uppercase">Hrs</span></div>
@@ -862,520 +1502,639 @@
                 <div class="text-center"><span class="block text-3xl md:text-5xl font-bold text-white">${minutes}</span><span class="text-xs text-gray-500 uppercase">Mins</span></div>
                 <div class="text-3xl md:text-5xl font-bold text-gray-600 hidden sm:block">:</div>
                 <div class="text-center hidden sm:block"><span class="block text-3xl md:text-5xl font-bold text-neon-red">${seconds}</span><span class="text-xs text-gray-500 uppercase">Secs</span></div>
-            `;
-            const timerEl = document.getElementById("countdown");
-            if(timerEl) timerEl.innerHTML = timerHTML;
+            `
+        const timerEl = document.getElementById('countdown')
+        if (timerEl) timerEl.innerHTML = timerHTML
+      }
+      setInterval(updateCountdown, 1000)
+      updateCountdown()
+
+      // --- 3. Scroll Reveal ---
+      const revealElements = document.querySelectorAll('.reveal')
+      const revealOnScroll = () => {
+        const windowHeight = window.innerHeight
+        const elementVisible = 150
+        revealElements.forEach((reveal) => {
+          const elementTop = reveal.getBoundingClientRect().top
+          if (elementTop < windowHeight - elementVisible)
+            reveal.classList.add('active')
+        })
+      }
+      window.addEventListener('scroll', revealOnScroll)
+      revealOnScroll()
+
+      // --- 4. Form Submission ---
+      // Update member fields based on team size
+
+      // Handle file upload
+      function handleFileUpload(input) {
+        const file = input.files[0]
+        if (file) {
+          // Check file size (5MB max)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('File size must be less than 5MB')
+            input.value = ''
+            return
+          }
+
+          // Check file type
+          const validTypes = ['image/png', 'image/jpeg', 'image/jpg']
+          if (!validTypes.includes(file.type)) {
+            alert('Please upload a PNG, JPG, or JPEG file')
+            input.value = ''
+            return
+          }
+
+          // Show file preview
+          document.getElementById('fileName').textContent = file.name
+          document.getElementById('filePreview').classList.remove('hidden')
+          document.getElementById('fileLabel').textContent =
+            'File selected: ' + file.name
         }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+      }
 
-        // --- 3. Scroll Reveal ---
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealOnScroll = () => {
-            const windowHeight = window.innerHeight;
-            const elementVisible = 150;
-            revealElements.forEach((reveal) => {
-                const elementTop = reveal.getBoundingClientRect().top;
-                if (elementTop < windowHeight - elementVisible) reveal.classList.add('active');
-            });
-        };
-        window.addEventListener('scroll', revealOnScroll);
-        revealOnScroll();
+      // Remove uploaded file
+      function removeFile() {
+        document.getElementById('paymentScreenshot').value = ''
+        document.getElementById('filePreview').classList.add('hidden')
+        document.getElementById('fileLabel').textContent =
+          'Click to upload or drag and drop'
+      }
 
-        // --- 4. Form Submission ---
-        // Update member fields based on team size
-        function updateMemberFields() {
-            const teamSize = document.getElementById('teamSize').value;
-            const member5Field = document.getElementById('member5Field');
-            const member5Input = member5Field.querySelector('input');
-            
-            if (teamSize === '5') {
-                member5Field.classList.remove('hidden');
-                member5Input.required = true;
-            } else if (teamSize === '4') {
-                member5Field.classList.add('hidden');
-                member5Input.required = false;
-                member5Input.value = '';
+      document
+        .getElementById('regForm')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault()
+
+          const btn = this.querySelector('button[type="submit"]')
+          const originalText = btn.innerText
+
+          // Validate file upload
+          const fileInput = document.getElementById('paymentScreenshot')
+          if (!fileInput.files || !fileInput.files[0]) {
+            alert('Please upload payment screenshot')
+            return
+          }
+
+          // Disable button
+          btn.innerText = 'REGISTERING...'
+          btn.classList.add('opacity-75', 'cursor-not-allowed')
+          btn.disabled = true
+
+          try {
+            // Prepare form data
+            const formData = new FormData()
+            formData.append('teamName', this.teamName.value)
+            formData.append('leaderName', this.leaderName.value)
+            formData.append('leaderBranch', this.leaderbranch.value)
+            formData.append('leaderRegdNo', this.leaderRegdNo.value)
+            formData.append('member2Name', this.member2Name.value)
+            formData.append('member2Branch', this.member2branch.value)
+            formData.append('member2RegdNo', this.member2RegdNo.value)
+            formData.append('member3Name', this.member3Name.value)
+            formData.append('member3Branch', this.member3branch.value)
+            formData.append('member3RegdNo', this.member3RegdNo.value)
+            formData.append('member4Name', this.member4Name.value)
+            formData.append('member4Branch', this.member4branch.value)
+            formData.append('member4RegdNo', this.member4RegdNo.value)
+            formData.append('member5Name', this.member5Name.value)
+            formData.append('member5Branch', this.member5branch.value)
+            formData.append('member5RegdNo', this.member5RegdNo.value)
+
+            formData.append('paymentScreenshot', fileInput.files[0])
+
+            // Send to backend
+            const response = await fetch(
+              'http://localhost:5000/api/registrations',
+              {
+                method: 'POST',
+                body: formData,
+              }
+            )
+
+            const data = await response.json()
+
+            if (data.success) {
+              // Success
+              btn.innerText = 'REGISTRATION SUCCESSFUL!'
+              btn.classList.remove('bg-neon-red', 'hover:bg-red-700')
+              btn.classList.add('bg-green-600', 'hover:bg-green-700')
+
+              setTimeout(() => {
+                this.reset()
+                removeFile()
+                btn.innerText = originalText
+                btn.classList.remove(
+                  'bg-green-600',
+                  'hover:bg-green-700',
+                  'opacity-75',
+                  'cursor-not-allowed'
+                )
+                btn.classList.add('bg-neon-red', 'hover:bg-red-700')
+                btn.disabled = false
+                alert(
+                  `Welcome to RoboXplore, ${data.data.teamName}! Your registration is complete.`
+                )
+              }, 2000)
+            } else {
+              // Error from server
+              throw new Error(data.message || 'Registration failed')
             }
+          } catch (error) {
+            console.error('Registration error:', error)
+            btn.innerText = originalText
+            btn.classList.remove('opacity-75', 'cursor-not-allowed')
+            btn.disabled = false
+
+            let errorMessage = 'Registration failed. Please try again.'
+            if (error.message) {
+              errorMessage = error.message
+            }
+
+            alert(errorMessage)
+          }
+        })
+
+      // --- 5. Hero Canvas ---
+      const canvas = document.getElementById('hero-canvas')
+      const ctx = canvas.getContext('2d')
+      let width, height
+      let bot = { x: 0, y: 0, speed: 0.005, progress: 0 }
+      let pathPoints = []
+
+      function resize() {
+        width = canvas.width = window.innerWidth
+        height = canvas.height = window.innerHeight
+        generatePath()
+      }
+
+      function generatePath() {
+        pathPoints = []
+        const pointsCount = 10
+        pathPoints.push({ x: 0, y: height / 2 })
+        for (let i = 1; i < pointsCount; i++) {
+          pathPoints.push({
+            x: (width / pointsCount) * i,
+            y: height / 2 + Math.sin(i) * (height / 3),
+          })
+        }
+        pathPoints.push({ x: width, y: height / 2 })
+      }
+
+      function getPathPoint(t) {
+        const totalSegments = pathPoints.length - 1
+        const segment = Math.floor(t * totalSegments)
+        const subT = t * totalSegments - segment
+        const p0 = pathPoints[segment]
+        const p1 = pathPoints[segment + 1]
+        if (!p1) return p0
+        return {
+          x: p0.x + (p1.x - p0.x) * subT,
+          y: p0.y + (p1.y - p0.y) * ((1 - Math.cos(subT * Math.PI)) / 2),
+        }
+      }
+
+      function draw() {
+        ctx.fillStyle = 'rgba(11, 11, 11, 0.2)'
+        ctx.fillRect(0, 0, width, height)
+        ctx.beginPath()
+        ctx.moveTo(pathPoints[0].x, pathPoints[0].y)
+        for (let i = 0; i <= 100; i++) {
+          let p = getPathPoint(i / 100)
+          ctx.lineTo(p.x, p.y)
+        }
+        ctx.strokeStyle = '#333'
+        ctx.lineWidth = 20
+        ctx.stroke()
+        ctx.strokeStyle = '#E10600'
+        ctx.lineWidth = 2
+        ctx.stroke()
+        bot.progress += bot.speed
+        if (bot.progress >= 1) bot.progress = 0
+        let currentPos = getPathPoint(bot.progress)
+        ctx.shadowBlur = 20
+        ctx.shadowColor = '#00A3FF'
+        ctx.fillStyle = '#00A3FF'
+        ctx.beginPath()
+        ctx.arc(currentPos.x, currentPos.y, 8, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.shadowBlur = 0
+        let nextPos = getPathPoint(bot.progress + 0.01)
+        let angle = Math.atan2(
+          nextPos.y - currentPos.y,
+          nextPos.x - currentPos.x
+        )
+        ctx.fillStyle = 'red'
+        ctx.beginPath()
+        ctx.arc(
+          currentPos.x + Math.cos(angle - 0.5) * 12,
+          currentPos.y + Math.sin(angle - 0.5) * 12,
+          3,
+          0,
+          Math.PI * 2
+        )
+        ctx.arc(
+          currentPos.x + Math.cos(angle + 0.5) * 12,
+          currentPos.y + Math.sin(angle + 0.5) * 12,
+          3,
+          0,
+          Math.PI * 2
+        )
+        ctx.fill()
+        requestAnimationFrame(draw)
+      }
+      window.addEventListener('resize', resize)
+      resize()
+      draw()
+
+      // --- 6. ELECTRIC BORDER LOGIC (Vanilla JS Port) ---
+      class ElectricBorder {
+        constructor(element) {
+          this.container = element
+          this.color = element.getAttribute('data-color') || '#5227FF'
+          this.speed = 1
+          this.chaos = 0.12
+          this.borderRadius = 24
+
+          this.canvas = null
+          this.ctx = null
+          this.animationId = null
+          this.time = 0
+          this.lastFrameTime = 0
+
+          this.init()
         }
 
-        // Handle file upload
-        function handleFileUpload(input) {
-            const file = input.files[0];
-            if (file) {
-                // Check file size (5MB max)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('File size must be less than 5MB');
-                    input.value = '';
-                    return;
-                }
-                
-                // Check file type
-                const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-                if (!validTypes.includes(file.type)) {
-                    alert('Please upload a PNG, JPG, or JPEG file');
-                    input.value = '';
-                    return;
-                }
-                
-                // Show file preview
-                document.getElementById('fileName').textContent = file.name;
-                document.getElementById('filePreview').classList.remove('hidden');
-                document.getElementById('fileLabel').textContent = 'File selected: ' + file.name;
-            }
+        // --- Math Utilities ---
+        hexToRgba(hex, alpha = 1) {
+          if (!hex) return `rgba(0,0,0,${alpha})`
+          let h = hex.replace('#', '')
+          if (h.length === 3)
+            h = h
+              .split('')
+              .map((c) => c + c)
+              .join('')
+          const int = parseInt(h, 16)
+          return `rgba(${(int >> 16) & 255}, ${(int >> 8) & 255}, ${
+            int & 255
+          }, ${alpha})`
         }
 
-        // Remove uploaded file
-        function removeFile() {
-            document.getElementById('paymentScreenshot').value = '';
-            document.getElementById('filePreview').classList.add('hidden');
-            document.getElementById('fileLabel').textContent = 'Click to upload or drag and drop';
+        random(x) {
+          return (Math.sin(x * 12.9898) * 43758.5453) % 1
         }
 
-        document.getElementById('regForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const btn = this.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
-            
-            // Validate team size selection
-            const teamSize = document.getElementById('teamSize').value;
-            if (!teamSize) {
-                alert('Please select team size');
-                return;
-            }
-            
-            // Validate file upload
-            const fileInput = document.getElementById('paymentScreenshot');
-            if (!fileInput.files || !fileInput.files[0]) {
-                alert('Please upload payment screenshot');
-                return;
-            }
-            
-            // Disable button
-            btn.innerText = 'REGISTERING...';
-            btn.classList.add('opacity-75', 'cursor-not-allowed');
-            btn.disabled = true;
-            
-            try {
-                // Prepare form data
-                const formData = new FormData();
-                formData.append('teamName', this.teamName.value);
-                formData.append('leaderName', this.leaderName.value);
-                formData.append('branch', this.branch.value);
-                formData.append('leaderRegdNo', this.leaderRegdNo.value);
-                formData.append('teamSize', teamSize);
-                formData.append('member2', this.member2.value);
-                formData.append('member3', this.member3.value);
-                formData.append('member4', this.member4.value);
-                
-                // Always send member5, even if empty
-                if (teamSize === '5' && this.member5) {
-                    formData.append('member5', this.member5.value);
-                } else {
-                    formData.append('member5', '');
-                }
-                
-                formData.append('paymentScreenshot', fileInput.files[0]);
-                
-                // Send to backend
-                const response = await fetch('https://roboxplore-be.vercel.app/api/registrations', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Success
-                    btn.innerText = 'REGISTRATION SUCCESSFUL!';
-                    btn.classList.remove('bg-neon-red', 'hover:bg-red-700');
-                    btn.classList.add('bg-green-600', 'hover:bg-green-700');
-                    
-                    setTimeout(() => {
-                        this.reset();
-                        removeFile();
-                        btn.innerText = originalText;
-                        btn.classList.remove('bg-green-600', 'hover:bg-green-700', 'opacity-75', 'cursor-not-allowed');
-                        btn.classList.add('bg-neon-red', 'hover:bg-red-700');
-                        btn.disabled = false;
-                        alert(`Welcome to RoboXplore, ${data.data.teamName}! Your registration is complete.`);
-                    }, 2000);
-                } else {
-                    // Error from server
-                    throw new Error(data.message || 'Registration failed');
-                }
-                
-            } catch (error) {
-                console.error('Registration error:', error);
-                btn.innerText = originalText;
-                btn.classList.remove('opacity-75', 'cursor-not-allowed');
-                btn.disabled = false;
-                
-                let errorMessage = 'Registration failed. Please try again.';
-                if (error.message) {
-                    errorMessage = error.message;
-                }
-                
-                alert(errorMessage);
-            }
-        });
-
-        // --- 5. Hero Canvas ---
-        const canvas = document.getElementById('hero-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let bot = { x: 0, y: 0, speed: 0.005, progress: 0 };
-        let pathPoints = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            generatePath();
+        noise2D(x, y) {
+          const i = Math.floor(x)
+          const j = Math.floor(y)
+          const fx = x - i
+          const fy = y - j
+          const a = this.random(i + j * 57)
+          const b = this.random(i + 1 + j * 57)
+          const c = this.random(i + (j + 1) * 57)
+          const d = this.random(i + 1 + (j + 1) * 57)
+          const ux = fx * fx * (3.0 - 2.0 * fx)
+          const uy = fy * fy * (3.0 - 2.0 * fy)
+          return (
+            a * (1 - ux) * (1 - uy) +
+            b * ux * (1 - uy) +
+            c * (1 - ux) * uy +
+            d * ux * uy
+          )
         }
 
-        function generatePath() {
-            pathPoints = [];
-            const pointsCount = 10;
-            pathPoints.push({x: 0, y: height/2});
-            for(let i=1; i < pointsCount; i++) {
-                pathPoints.push({
-                    x: (width / pointsCount) * i,
-                    y: (height/2) + (Math.sin(i) * (height/3))
-                });
-            }
-            pathPoints.push({x: width, y: height/2});
+        octavedNoise(
+          x,
+          octaves,
+          lacunarity,
+          gain,
+          baseAmplitude,
+          baseFrequency,
+          time,
+          seed,
+          baseFlatness
+        ) {
+          let y = 0
+          let amplitude = baseAmplitude
+          let frequency = baseFrequency
+          for (let i = 0; i < octaves; i++) {
+            let octaveAmplitude = amplitude
+            if (i === 0) octaveAmplitude *= baseFlatness
+            y +=
+              octaveAmplitude *
+              this.noise2D(frequency * x + seed * 100, time * frequency * 0.3)
+            frequency *= lacunarity
+            amplitude *= gain
+          }
+          return y
         }
 
-        function getPathPoint(t) {
-            const totalSegments = pathPoints.length - 1;
-            const segment = Math.floor(t * totalSegments);
-            const subT = (t * totalSegments) - segment;
-            const p0 = pathPoints[segment];
-            const p1 = pathPoints[segment + 1];
-            if(!p1) return p0;
+        getCornerPoint(
+          centerX,
+          centerY,
+          radius,
+          startAngle,
+          arcLength,
+          progress
+        ) {
+          const angle = startAngle + progress * arcLength
+          return {
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle),
+          }
+        }
+
+        getRoundedRectPoint(t, left, top, width, height, radius) {
+          const straightWidth = width - 2 * radius
+          const straightHeight = height - 2 * radius
+          const cornerArc = (Math.PI * radius) / 2
+          const totalPerimeter =
+            2 * straightWidth + 2 * straightHeight + 4 * cornerArc
+          const distance = t * totalPerimeter
+
+          let accumulated = 0
+
+          // Top Edge
+          if (distance <= accumulated + straightWidth) {
+            const progress = (distance - accumulated) / straightWidth
+            return { x: left + radius + progress * straightWidth, y: top }
+          }
+          accumulated += straightWidth
+
+          // Top Right Corner
+          if (distance <= accumulated + cornerArc) {
+            const progress = (distance - accumulated) / cornerArc
+            return this.getCornerPoint(
+              left + width - radius,
+              top + radius,
+              radius,
+              -Math.PI / 2,
+              Math.PI / 2,
+              progress
+            )
+          }
+          accumulated += cornerArc
+
+          // Right Edge
+          if (distance <= accumulated + straightHeight) {
+            const progress = (distance - accumulated) / straightHeight
             return {
-                x: p0.x + (p1.x - p0.x) * subT,
-                y: p0.y + (p1.y - p0.y) * ((1 - Math.cos(subT * Math.PI)) / 2)
-            };
+              x: left + width,
+              y: top + radius + progress * straightHeight,
+            }
+          }
+          accumulated += straightHeight
+
+          // Bottom Right Corner
+          if (distance <= accumulated + cornerArc) {
+            const progress = (distance - accumulated) / cornerArc
+            return this.getCornerPoint(
+              left + width - radius,
+              top + height - radius,
+              radius,
+              0,
+              Math.PI / 2,
+              progress
+            )
+          }
+          accumulated += cornerArc
+
+          // Bottom Edge
+          if (distance <= accumulated + straightWidth) {
+            const progress = (distance - accumulated) / straightWidth
+            return {
+              x: left + width - radius - progress * straightWidth,
+              y: top + height,
+            }
+          }
+          accumulated += straightWidth
+
+          // Bottom Left Corner
+          if (distance <= accumulated + cornerArc) {
+            const progress = (distance - accumulated) / cornerArc
+            return this.getCornerPoint(
+              left + radius,
+              top + height - radius,
+              radius,
+              Math.PI / 2,
+              Math.PI / 2,
+              progress
+            )
+          }
+          accumulated += cornerArc
+
+          // Left Edge
+          if (distance <= accumulated + straightHeight) {
+            const progress = (distance - accumulated) / straightHeight
+            return {
+              x: left,
+              y: top + height - radius - progress * straightHeight,
+            }
+          }
+          accumulated += straightHeight
+
+          // Top Left Corner (Remainder)
+          const progress = (distance - accumulated) / cornerArc
+          return this.getCornerPoint(
+            left + radius,
+            top + radius,
+            radius,
+            Math.PI,
+            Math.PI / 2,
+            progress
+          )
         }
 
-        function draw() {
-            ctx.fillStyle = 'rgba(11, 11, 11, 0.2)';
-            ctx.fillRect(0, 0, width, height);
-            ctx.beginPath();
-            ctx.moveTo(pathPoints[0].x, pathPoints[0].y);
-            for (let i = 0; i <= 100; i++) {
-                let p = getPathPoint(i/100);
-                ctx.lineTo(p.x, p.y);
-            }
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 20;
-            ctx.stroke();
-            ctx.strokeStyle = '#E10600';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            bot.progress += bot.speed;
-            if (bot.progress >= 1) bot.progress = 0;
-            let currentPos = getPathPoint(bot.progress);
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = "#00A3FF";
-            ctx.fillStyle = "#00A3FF";
-            ctx.beginPath();
-            ctx.arc(currentPos.x, currentPos.y, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            let nextPos = getPathPoint(bot.progress + 0.01);
-            let angle = Math.atan2(nextPos.y - currentPos.y, nextPos.x - currentPos.x);
-            ctx.fillStyle = "red";
-            ctx.beginPath();
-            ctx.arc(currentPos.x + Math.cos(angle - 0.5)*12, currentPos.y + Math.sin(angle - 0.5)*12, 3, 0, Math.PI*2);
-            ctx.arc(currentPos.x + Math.cos(angle + 0.5)*12, currentPos.y + Math.sin(angle + 0.5)*12, 3, 0, Math.PI*2);
-            ctx.fill();
-            requestAnimationFrame(draw);
-        }
-        window.addEventListener('resize', resize);
-        resize();
-        draw();
+        init() {
+          // 1. Inject Structure
+          this.canvas = document.createElement('canvas')
+          this.canvas.className = 'block'
 
-        // --- 6. ELECTRIC BORDER LOGIC (Vanilla JS Port) ---
-        class ElectricBorder {
-            constructor(element) {
-                this.container = element;
-                this.color = element.getAttribute('data-color') || '#5227FF';
-                this.speed = 1;
-                this.chaos = 0.12;
-                this.borderRadius = 24;
-                
-                this.canvas = null;
-                this.ctx = null;
-                this.animationId = null;
-                this.time = 0;
-                this.lastFrameTime = 0;
-                
-                this.init();
-            }
+          const canvasContainer = document.createElement('div')
+          canvasContainer.className =
+            'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[20]'
+          canvasContainer.appendChild(this.canvas)
 
-            // --- Math Utilities ---
-            hexToRgba(hex, alpha = 1) {
-                if (!hex) return `rgba(0,0,0,${alpha})`;
-                let h = hex.replace('#', '');
-                if (h.length === 3) h = h.split('').map(c => c + c).join('');
-                const int = parseInt(h, 16);
-                return `rgba(${(int >> 16) & 255}, ${(int >> 8) & 255}, ${int & 255}, ${alpha})`;
-            }
+          const glowContainer = document.createElement('div')
+          glowContainer.className =
+            'absolute inset-0 rounded-[inherit] pointer-events-none z-0'
+          glowContainer.innerHTML = `
+                    <div class="absolute inset-0 rounded-[inherit] pointer-events-none" style="border: 2px solid ${this.hexToRgba(
+                      this.color,
+                      0.6
+                    )}; filter: blur(1px)"></div>
+                    <div class="absolute inset-0 rounded-[inherit] pointer-events-none" style="border: 2px solid ${
+                      this.color
+                    }; filter: blur(4px)"></div>
+                    <div class="absolute inset-0 rounded-[inherit] pointer-events-none -z-[1] scale-110 opacity-30" style="filter: blur(32px); background: linear-gradient(-30deg, ${
+                      this.color
+                    }, transparent, ${this.color})"></div>
+                `
 
-            random(x) {
-                return (Math.sin(x * 12.9898) * 43758.5453) % 1;
-            }
+          this.container.insertBefore(glowContainer, this.container.firstChild)
+          this.container.insertBefore(
+            canvasContainer,
+            this.container.firstChild
+          )
 
-            noise2D(x, y) {
-                const i = Math.floor(x);
-                const j = Math.floor(y);
-                const fx = x - i;
-                const fy = y - j;
-                const a = this.random(i + j * 57);
-                const b = this.random(i + 1 + j * 57);
-                const c = this.random(i + (j + 1) * 57);
-                const d = this.random(i + 1 + (j + 1) * 57);
-                const ux = fx * fx * (3.0 - 2.0 * fx);
-                const uy = fy * fy * (3.0 - 2.0 * fy);
-                return a * (1 - ux) * (1 - uy) + b * ux * (1 - uy) + c * (1 - ux) * uy + d * ux * uy;
-            }
+          this.ctx = this.canvas.getContext('2d')
 
-            octavedNoise(x, octaves, lacunarity, gain, baseAmplitude, baseFrequency, time, seed, baseFlatness) {
-                let y = 0;
-                let amplitude = baseAmplitude;
-                let frequency = baseFrequency;
-                for (let i = 0; i < octaves; i++) {
-                    let octaveAmplitude = amplitude;
-                    if (i === 0) octaveAmplitude *= baseFlatness;
-                    y += octaveAmplitude * this.noise2D(frequency * x + seed * 100, time * frequency * 0.3);
-                    frequency *= lacunarity;
-                    amplitude *= gain;
-                }
-                return y;
-            }
+          // 2. Start Animation Loop & Resize Observer
+          this.resize()
+          const observer = new ResizeObserver(() => this.resize())
+          observer.observe(this.container)
 
-            getCornerPoint(centerX, centerY, radius, startAngle, arcLength, progress) {
-                const angle = startAngle + progress * arcLength;
-                return { x: centerX + radius * Math.cos(angle), y: centerY + radius * Math.sin(angle) };
-            }
-
-            getRoundedRectPoint(t, left, top, width, height, radius) {
-                const straightWidth = width - 2 * radius;
-                const straightHeight = height - 2 * radius;
-                const cornerArc = (Math.PI * radius) / 2;
-                const totalPerimeter = 2 * straightWidth + 2 * straightHeight + 4 * cornerArc;
-                const distance = t * totalPerimeter;
-                
-                let accumulated = 0;
-
-                // Top Edge
-                if (distance <= accumulated + straightWidth) {
-                    const progress = (distance - accumulated) / straightWidth;
-                    return { x: left + radius + progress * straightWidth, y: top };
-                }
-                accumulated += straightWidth;
-
-                // Top Right Corner
-                if (distance <= accumulated + cornerArc) {
-                    const progress = (distance - accumulated) / cornerArc;
-                    return this.getCornerPoint(left + width - radius, top + radius, radius, -Math.PI / 2, Math.PI / 2, progress);
-                }
-                accumulated += cornerArc;
-
-                // Right Edge
-                if (distance <= accumulated + straightHeight) {
-                    const progress = (distance - accumulated) / straightHeight;
-                    return { x: left + width, y: top + radius + progress * straightHeight };
-                }
-                accumulated += straightHeight;
-
-                // Bottom Right Corner
-                if (distance <= accumulated + cornerArc) {
-                    const progress = (distance - accumulated) / cornerArc;
-                    return this.getCornerPoint(left + width - radius, top + height - radius, radius, 0, Math.PI / 2, progress);
-                }
-                accumulated += cornerArc;
-
-                // Bottom Edge
-                if (distance <= accumulated + straightWidth) {
-                    const progress = (distance - accumulated) / straightWidth;
-                    return { x: left + width - radius - progress * straightWidth, y: top + height };
-                }
-                accumulated += straightWidth;
-
-                // Bottom Left Corner
-                if (distance <= accumulated + cornerArc) {
-                    const progress = (distance - accumulated) / cornerArc;
-                    return this.getCornerPoint(left + radius, top + height - radius, radius, Math.PI / 2, Math.PI / 2, progress);
-                }
-                accumulated += cornerArc;
-
-                // Left Edge
-                if (distance <= accumulated + straightHeight) {
-                    const progress = (distance - accumulated) / straightHeight;
-                    return { x: left, y: top + height - radius - progress * straightHeight };
-                }
-                accumulated += straightHeight;
-
-                // Top Left Corner (Remainder)
-                const progress = (distance - accumulated) / cornerArc;
-                return this.getCornerPoint(left + radius, top + radius, radius, Math.PI, Math.PI / 2, progress);
-            }
-
-            init() {
-                // 1. Inject Structure
-                this.canvas = document.createElement('canvas');
-                this.canvas.className = 'block';
-                
-                const canvasContainer = document.createElement('div');
-                canvasContainer.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[20]';
-                canvasContainer.appendChild(this.canvas);
-                
-                const glowContainer = document.createElement('div');
-                glowContainer.className = 'absolute inset-0 rounded-[inherit] pointer-events-none z-0';
-                glowContainer.innerHTML = `
-                    <div class="absolute inset-0 rounded-[inherit] pointer-events-none" style="border: 2px solid ${this.hexToRgba(this.color, 0.6)}; filter: blur(1px)"></div>
-                    <div class="absolute inset-0 rounded-[inherit] pointer-events-none" style="border: 2px solid ${this.color}; filter: blur(4px)"></div>
-                    <div class="absolute inset-0 rounded-[inherit] pointer-events-none -z-[1] scale-110 opacity-30" style="filter: blur(32px); background: linear-gradient(-30deg, ${this.color}, transparent, ${this.color})"></div>
-                `;
-
-                this.container.insertBefore(glowContainer, this.container.firstChild);
-                this.container.insertBefore(canvasContainer, this.container.firstChild);
-
-                this.ctx = this.canvas.getContext('2d');
-
-                // 2. Start Animation Loop & Resize Observer
-                this.resize();
-                const observer = new ResizeObserver(() => this.resize());
-                observer.observe(this.container);
-
-                this.animate(0);
-            }
-
-            resize() {
-                const borderOffset = 60;
-                const rect = this.container.getBoundingClientRect();
-                const width = rect.width + borderOffset * 2;
-                const height = rect.height + borderOffset * 2;
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-                this.canvas.width = width * dpr;
-                this.canvas.height = height * dpr;
-                this.canvas.style.width = `${width}px`;
-                this.canvas.style.height = `${height}px`;
-                this.ctx.scale(dpr, dpr);
-                
-                this.width = width;
-                this.height = height;
-            }
-
-            animate(currentTime) {
-                if (!this.ctx) return;
-                
-                const deltaTime = (currentTime - this.lastFrameTime) / 1000;
-                this.time += deltaTime * this.speed;
-                this.lastFrameTime = currentTime;
-
-                // Clear
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.scale(dpr, dpr);
-
-                // Config
-                const borderOffset = 60;
-                const displacement = 60;
-                const octaves = 10;
-                const lacunarity = 1.6;
-                const gain = 0.7;
-                const frequency = 10;
-                
-                this.ctx.strokeStyle = this.color;
-                this.ctx.lineWidth = 1;
-                this.ctx.lineCap = 'round';
-                this.ctx.lineJoin = 'round';
-
-                const left = borderOffset;
-                const top = borderOffset;
-                const borderWidth = this.width - 2 * borderOffset;
-                const borderHeight = this.height - 2 * borderOffset;
-                const maxRadius = Math.min(borderWidth, borderHeight) / 2;
-                const radius = Math.min(this.borderRadius, maxRadius);
-                
-                const perimeter = 2 * (borderWidth + borderHeight) + 2 * Math.PI * radius;
-                const sampleCount = Math.floor(perimeter / 2);
-
-                this.ctx.beginPath();
-                for (let i = 0; i <= sampleCount; i++) {
-                    const progress = i / sampleCount;
-                    const point = this.getRoundedRectPoint(progress, left, top, borderWidth, borderHeight, radius);
-                    
-                    const xNoise = this.octavedNoise(progress * 8, octaves, lacunarity, gain, this.chaos, frequency, this.time, 0, 0);
-                    const yNoise = this.octavedNoise(progress * 8, octaves, lacunarity, gain, this.chaos, frequency, this.time, 1, 0);
-
-                    const dx = point.x + xNoise * displacement;
-                    const dy = point.y + yNoise * displacement;
-
-                    if (i === 0) this.ctx.moveTo(dx, dy);
-                    else this.ctx.lineTo(dx, dy);
-                }
-                this.ctx.closePath();
-                this.ctx.stroke();
-
-                requestAnimationFrame((t) => this.animate(t));
-            }
+          this.animate(0)
         }
 
-        // Initialize Electric Borders
-        document.querySelectorAll('.electric-border-container').forEach(el => {
-            new ElectricBorder(el);
-        });
+        resize() {
+          const borderOffset = 60
+          const rect = this.container.getBoundingClientRect()
+          const width = rect.width + borderOffset * 2
+          const height = rect.height + borderOffset * 2
+          const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
-        // --- 7. DRAWER LOGIC ---
-        const drawer = document.getElementById('drawer');
-        const drawerOverlay = document.getElementById('drawer-overlay');
+          this.canvas.width = width * dpr
+          this.canvas.height = height * dpr
+          this.canvas.style.width = `${width}px`
+          this.canvas.style.height = `${height}px`
+          this.ctx.scale(dpr, dpr)
 
-        function openDrawer() {
-            // Show Overlay
-            drawerOverlay.classList.remove('hidden');
-            // Small delay to allow display:block to apply before opacity transition
-            setTimeout(() => {
-                drawerOverlay.classList.remove('opacity-0');
-            }, 10);
-
-            // Slide Drawer Up
-            drawer.classList.remove('translate-y-full');
-            drawer.classList.add('translate-y-0');
-
-            // Disable Body Scroll
-            document.body.style.overflow = 'hidden';
+          this.width = width
+          this.height = height
         }
 
-        function closeDrawer() {
-            // Slide Drawer Down
-            drawer.classList.remove('translate-y-0');
-            drawer.classList.add('translate-y-full');
+        animate(currentTime) {
+          if (!this.ctx) return
 
-            // Hide Overlay
-            drawerOverlay.classList.add('opacity-0');
-            
-            setTimeout(() => {
-                drawerOverlay.classList.add('hidden');
-                // Re-enable Body Scroll
-                document.body.style.overflow = '';
-            }, 300); // Match transition duration
+          const deltaTime = (currentTime - this.lastFrameTime) / 1000
+          this.time += deltaTime * this.speed
+          this.lastFrameTime = currentTime
+
+          // Clear
+          const dpr = Math.min(window.devicePixelRatio || 1, 2)
+          this.ctx.setTransform(1, 0, 0, 1, 0, 0)
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+          this.ctx.scale(dpr, dpr)
+
+          // Config
+          const borderOffset = 60
+          const displacement = 60
+          const octaves = 10
+          const lacunarity = 1.6
+          const gain = 0.7
+          const frequency = 10
+
+          this.ctx.strokeStyle = this.color
+          this.ctx.lineWidth = 1
+          this.ctx.lineCap = 'round'
+          this.ctx.lineJoin = 'round'
+
+          const left = borderOffset
+          const top = borderOffset
+          const borderWidth = this.width - 2 * borderOffset
+          const borderHeight = this.height - 2 * borderOffset
+          const maxRadius = Math.min(borderWidth, borderHeight) / 2
+          const radius = Math.min(this.borderRadius, maxRadius)
+
+          const perimeter =
+            2 * (borderWidth + borderHeight) + 2 * Math.PI * radius
+          const sampleCount = Math.floor(perimeter / 2)
+
+          this.ctx.beginPath()
+          for (let i = 0; i <= sampleCount; i++) {
+            const progress = i / sampleCount
+            const point = this.getRoundedRectPoint(
+              progress,
+              left,
+              top,
+              borderWidth,
+              borderHeight,
+              radius
+            )
+
+            const xNoise = this.octavedNoise(
+              progress * 8,
+              octaves,
+              lacunarity,
+              gain,
+              this.chaos,
+              frequency,
+              this.time,
+              0,
+              0
+            )
+            const yNoise = this.octavedNoise(
+              progress * 8,
+              octaves,
+              lacunarity,
+              gain,
+              this.chaos,
+              frequency,
+              this.time,
+              1,
+              0
+            )
+
+            const dx = point.x + xNoise * displacement
+            const dy = point.y + yNoise * displacement
+
+            if (i === 0) this.ctx.moveTo(dx, dy)
+            else this.ctx.lineTo(dx, dy)
+          }
+          this.ctx.closePath()
+          this.ctx.stroke()
+
+          requestAnimationFrame((t) => this.animate(t))
         }
+      }
 
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !drawerOverlay.classList.contains('hidden')) {
-                closeDrawer();
-            }
-        });
+      // Initialize Electric Borders
+      document.querySelectorAll('.electric-border-container').forEach((el) => {
+        new ElectricBorder(el)
+      })
 
+      // --- 7. DRAWER LOGIC ---
+      const drawer = document.getElementById('drawer')
+      const drawerOverlay = document.getElementById('drawer-overlay')
+
+      function openDrawer() {
+        // Show Overlay
+        drawerOverlay.classList.remove('hidden')
+        // Small delay to allow display:block to apply before opacity transition
+        setTimeout(() => {
+          drawerOverlay.classList.remove('opacity-0')
+        }, 10)
+
+        // Slide Drawer Up
+        drawer.classList.remove('translate-y-full')
+        drawer.classList.add('translate-y-0')
+
+        // Disable Body Scroll
+        document.body.style.overflow = 'hidden'
+      }
+
+      function closeDrawer() {
+        // Slide Drawer Down
+        drawer.classList.remove('translate-y-0')
+        drawer.classList.add('translate-y-full')
+
+        // Hide Overlay
+        drawerOverlay.classList.add('opacity-0')
+
+        setTimeout(() => {
+          drawerOverlay.classList.add('hidden')
+          // Re-enable Body Scroll
+          document.body.style.overflow = ''
+        }, 300) // Match transition duration
+      }
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !drawerOverlay.classList.contains('hidden')) {
+          closeDrawer()
+        }
+      })
     </script>
-</body>
+  </body>
 </html>
